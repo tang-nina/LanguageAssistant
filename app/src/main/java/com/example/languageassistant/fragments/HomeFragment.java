@@ -113,6 +113,5 @@ public class HomeFragment extends Fragment {
 
         //check if user has already responded to them
 
-
     }
 }
