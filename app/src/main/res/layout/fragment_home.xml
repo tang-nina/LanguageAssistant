@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.HomeFragment">
+
+    <RelativeLayout
+        android:id="@+id/rlPrompts"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mcvContainer1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            app:cardBackgroundColor="#ffffff"
+            app:cardCornerRadius="8dp">
+
+            <TextView
+                android:id="@+id/tvPrompt1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                tools:text="Prompt 1 will go here kfjv dsjvnsdkjv ksdjvnsdjvn djvndvn dvsd vdsvjsndvnj vdkvndkjn" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mcvContainer2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/mcvContainer1"
+            android:layout_marginTop="20dp"
+            app:cardCornerRadius="8dp">
+
+            <TextView
+                android:id="@+id/tvPrompt2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                tools:text="Prompt 2 will go here." />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/mcvContainer3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/mcvContainer2"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentBottom="false"
+            android:layout_marginTop="20dp"
+            app:cardCornerRadius="8dp">
+
+            <TextView
+                android:id="@+id/tvPrompt3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                tools:text="Prompt 3 will go here." />
+        </com.google.android.material.card.MaterialCardView>
+    </RelativeLayout>
+
+
+</RelativeLayout>

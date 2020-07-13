@@ -2,7 +2,9 @@ package com.example.languageassistant;
 
 import android.app.Application;
 
+import com.example.languageassistant.models.Prompt;
 import com.parse.Parse;
+import com.parse.ParseObject;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -21,7 +23,8 @@ public class ParseApplication extends Application {
 
         // set applicationId and server based on the values in the Heroku settings.
         // any network interceptors must be added with the Configuration Builder given this syntax
-        //ParseObject.registerSubclass(Post.class);
+
+        ParseObject.registerSubclass(Prompt.class);
         //ParseObject.registerSubclass(Comment.class);
 
 
