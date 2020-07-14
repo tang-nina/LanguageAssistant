@@ -26,7 +26,7 @@ import java.util.List;
  * Use the {@link GradedFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GradedFragment extends Fragment {
+public class GradedFragment extends Fragment{
     RecyclerView rvGraded;
     List<Response> responses;
     GradedAdapter adapter;
@@ -98,4 +98,5 @@ public class GradedFragment extends Fragment {
             }
         });
     }
+
 }

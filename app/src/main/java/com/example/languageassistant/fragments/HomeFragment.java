@@ -104,9 +104,13 @@ public class HomeFragment extends Fragment {
             public void done(List<Prompt> objects, ParseException e) {
                 if(e==null){
                     System.out.println("successful");
-                    tvPrompt1.setText(objects.get(0).getPrompt());
-                    tvPrompt2.setText(objects.get(1).getPrompt());
-                    tvPrompt3.setText(objects.get(2).getPrompt());
+                    try {
+                        tvPrompt1.setText(objects.get(0).getPrompt());
+                        tvPrompt2.setText(objects.get(1).getPrompt());
+                        tvPrompt3.setText(objects.get(2).getPrompt());
+                    }catch(IndexOutOfBoundsException exception){
+                        //display a screen that says please restart app or something like that
+                    }
                 }
             }
         });

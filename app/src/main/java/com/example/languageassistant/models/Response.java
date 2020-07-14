@@ -27,11 +27,11 @@ public class Response extends ParseObject {
         return getCreatedAt();
     }
 
-    public Prompt getPrompt(){
-        return (Prompt) getParseObject(KEY_PROMPT);
+    public String getPrompt(){
+        return (getString(KEY_PROMPT));
     }
 
-    public void setPrompt(Prompt prompt){
+    public void setPrompt(String prompt){
         put(KEY_PROMPT, prompt);
     }
 
