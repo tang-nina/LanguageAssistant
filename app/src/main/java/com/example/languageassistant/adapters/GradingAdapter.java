@@ -1,6 +1,7 @@
 package com.example.languageassistant.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.languageassistant.R;
@@ -77,6 +79,53 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
 
             }
 
+            private void submitFeedback(Response response, float rating, String comment){
+
+                response.setGrade((int) rating);
+                response.setComments(comment);
+                response.setGraded(true);
+                response.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+
+                        if(e == null){
+
+                            ParseUser user = ParseUser.getCurrentUser();
+
+                            user.put("totalResponsesGraded", ((int) user.getNumber("totalResponsesGraded")) + 1);
+                            user.put("responsesLeftToGrade", ((int) user.getNumber("responsesLeftToGrade")) - 1);
+
+
+                            user.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if(e == null){
+                                        Toast.makeText(context, "Your feedback has been saved successfully.", Toast.LENGTH_SHORT).show();
+                                        //clearing in case this affects other responses that get attached to the recycler view?
+                                        rbRating.setRating(0);
+                                        tietComments.getText().clear();
+
+                                        //should clear this entire card from the recycler view right away.
+
+                                    }else{
+                                        System.out.println("ISNT WORKING");
+
+                                    }
+
+                                }
+                            });
+
+
+                        }else{
+                            System.out.println("HEREEEEEEEEEEEE ggrading adapter");
+                        }
+
+                    }
+                });
+
+            }
+
+
             public void bind(final Response response) {
                 tvPrompt.setText(response.getPrompt());
                 //check if written or audio, but for now just assuming all is written
@@ -88,57 +137,37 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
                     public void onClick(View view) {
                         //does this need to be an int??? relating to how
                         //graded shows and stores the scores
-                        float rating = rbRating.getRating();
-                        String comment = tietComments.getText().toString();
+                        final float rating = rbRating.getRating();
+                        final String comment = tietComments.getText().toString();
 
 
                         if (comment.length() > MAX_COMMENT_LENGTH){
                             Toast.makeText(context, "Could not submit - your comments are too long.", Toast.LENGTH_SHORT).show();
                         }else if (rating == 0.0){
                             //pop up asking if they really meant to give a zero
-
-                        }else{
-                            response.setGrade((int) rating);
-                            response.setComments(comment);
-                            response.setGraded(true);
-                            response.saveInBackground(new SaveCallback() {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setCancelable(true);
+                            builder.setTitle("Please confirm.");
+                            builder.setMessage("Are you sure you want to give a score of 0 to this response?");
+                            builder.setPositiveButton("Confirm",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            submitFeedback(response, rating, comment);
+                                        }
+                                    });
+                            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                                 @Override
-                                public void done(ParseException e) {
-
-                                    if(e == null){
-
-                                        ParseUser user = ParseUser.getCurrentUser();
-
-                                        user.put("totalResponsesGraded", ((int) user.getNumber("totalResponsesGraded")) + 1);
-                                        user.put("responsesLeftToGrade", ((int) user.getNumber("responsesLeftToGrade")) - 1);
-
-
-                                        user.saveInBackground(new SaveCallback() {
-                                            @Override
-                                            public void done(ParseException e) {
-                                                if(e == null){
-                                                    Toast.makeText(context, "Your feedback has been saved successfully.", Toast.LENGTH_SHORT).show();
-                                                    //clearing in case this affects other responses that get attached to the recycler view?
-                                                    rbRating.setRating(0);
-                                                    tietComments.getText().clear();
-
-                                                    //should clear this entire card from the recycler view right away.
-
-                                                }else{
-                                                    System.out.println("ISNT WORKING");
-
-                                                }
-
-                                            }
-                                        });
-
-
-                                    }else{
-                                        System.out.println("HEREEEEEEEEEEEE ggrading adapter");
-                                    }
-
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //nothing happens
                                 }
                             });
+
+                            AlertDialog dialog = builder.create();
+                            dialog.show();
+
+                        }else{
+                            submitFeedback(response, rating, comment);
                         }
                     }
                 });
