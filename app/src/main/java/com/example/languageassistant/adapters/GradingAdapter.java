@@ -91,34 +91,50 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
                         float rating = rbRating.getRating();
                         String comment = tietComments.getText().toString();
 
+
                         if (comment.length() > MAX_COMMENT_LENGTH){
                             Toast.makeText(context, "Could not submit - your comments are too long.", Toast.LENGTH_SHORT).show();
                         }else if (rating == 0.0){
                             //pop up asking if they really meant to give a zero
 
-
                         }else{
-
                             response.setGrade((int) rating);
                             response.setComments(comment);
                             response.setGraded(true);
                             response.saveInBackground(new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
-                                    if(e== null){
-                                        Toast.makeText(context, "Your feedback has been saved successfully.", Toast.LENGTH_SHORT).show();
+
+                                    if(e == null){
 
                                         ParseUser user = ParseUser.getCurrentUser();
+
                                         user.put("totalResponsesGraded", ((int) user.getNumber("totalResponsesGraded")) + 1);
                                         user.put("responsesLeftToGrade", ((int) user.getNumber("responsesLeftToGrade")) - 1);
-                                        user.saveInBackground();
 
 
-                                        //clearing in case this affects other responses that get attached to the recycler view?
-                                        rbRating.setRating(0);
-                                        tietComments.getText().clear();
+                                        user.saveInBackground(new SaveCallback() {
+                                            @Override
+                                            public void done(ParseException e) {
+                                                if(e == null){
+                                                    Toast.makeText(context, "Your feedback has been saved successfully.", Toast.LENGTH_SHORT).show();
+                                                    //clearing in case this affects other responses that get attached to the recycler view?
+                                                    rbRating.setRating(0);
+                                                    tietComments.getText().clear();
 
-                                        //should clear this entire card from the recycler view right away.
+                                                    //should clear this entire card from the recycler view right away.
+
+                                                }else{
+                                                    System.out.println("ISNT WORKING");
+
+                                                }
+
+                                            }
+                                        });
+
+
+                                    }else{
+                                        System.out.println("HEREEEEEEEEEEEE ggrading adapter");
                                     }
 
                                 }

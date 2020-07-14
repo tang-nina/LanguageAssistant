@@ -62,7 +62,8 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="9dp"
                 android:numStars="5"
-                android:saveEnabled="true" />
+                android:saveEnabled="true"
+                android:stepSize="1.0" />
 
             <TextView
                 android:id="@+id/tvGradingHeader"
