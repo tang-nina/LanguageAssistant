@@ -50,7 +50,7 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
     class ViewHolder extends RecyclerView.ViewHolder{
 
         Response response;
-        boolean flag;
+        boolean flag; //false if feedback not showing, true if feedback showing
 
         TextView tvPrompt;
         TextView tvDate;
@@ -71,14 +71,10 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
             tvFeedback = itemView.findViewById(R.id.tvFeedback);
             mcvContainer = itemView.findViewById(R.id.mcvContainer);
 
-            mcvContainer.setOnTouchListener(new OnDoubleTapListener(itemView.getContext()) {
-                @Override
-                public void onDoubleTap(MotionEvent e) {
-                    Toast.makeText(itemView.getContext(), "Double Tap", Toast.LENGTH_SHORT).show();
-                }
-            });
-
             flag = false;
+            //all of the flag stuff as implemented means that
+            //if you open feedback, scroll past it and then come back to it, the feedback will
+            //be reset to not showing
 
         }
 
@@ -88,6 +84,36 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
             tvScore.setVisibility(View.GONE);
             tvFeedback.setVisibility(View.GONE);
 
+            mcvContainer.setOnTouchListener(new OnDoubleTapListener(itemView.getContext()) {
+                @Override
+                public void onDoubleTap(MotionEvent e) {
+                    Toast.makeText(itemView.getContext(), "Double Tap", Toast.LENGTH_SHORT).show();
+
+                    if(flag == false){
+                        if(response.getGraded() == false){
+                            tvNoGrade.setVisibility(View.VISIBLE);
+                        }else if(response.getGraded() == true){
+                            tvScore.setVisibility(View.VISIBLE);
+                            tvFeedback.setVisibility(View.VISIBLE);
+                            tvScore.setText(response.getGrade());
+                            tvFeedback.setText(response.getComments());
+                        }else{
+                            System.out.println("SOMETHING WENT WRONG, CHECK DEFAULT VAL FOR GRADED");
+                        }
+
+                        flag=true;
+
+                    }else{
+                        tvNoGrade.setVisibility(View.GONE);
+                        tvScore.setVisibility(View.GONE);
+                        tvFeedback.setVisibility(View.GONE);
+
+                        flag = false;
+                    }
+
+                }
+            });
+
             tvPrompt.setText(response.getPrompt());
             //check if written or audio, but for now just assuming all is written
             tvResponse.setText(response.getWrittenAnswer());
@@ -95,23 +121,6 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
 
 
         }
-
-        public boolean onDoubleTap(MotionEvent motionEvent) {
-
-            if(response.getGraded() == false){
-                tvNoGrade.setVisibility(View.VISIBLE);
-            }else if(response.getGraded() == true){
-                tvScore.setVisibility(View.VISIBLE);
-                tvFeedback.setVisibility(View.VISIBLE);
-                tvScore.setText(response.getGrade());
-                tvFeedback.setText(response.getComments());
-            }else{
-                System.out.println("SOMETHING WENT WRONG, CHECK DEFAULT VAL FOR GRADED");
-            }
-
-            return true;
-        }
-
 
     }
 
