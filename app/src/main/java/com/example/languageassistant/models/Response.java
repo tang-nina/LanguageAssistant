@@ -53,8 +53,8 @@ public class Response extends ParseObject {
         put(KEY_GRADED, graded);
     }
 
-    public int getGrade(){
-        return (int) getNumber(KEY_GRADE);
+    public Number getGrade(){
+        return getNumber(KEY_GRADE);
     }
 
     public void setGrade(int grade){

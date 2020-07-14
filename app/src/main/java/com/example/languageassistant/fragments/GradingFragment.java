@@ -5,16 +5,34 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.languageassistant.R;
+import com.example.languageassistant.adapters.GradingAdapter;
+import com.example.languageassistant.models.Response;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link GradingFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
+
+//date is the date that the responding user wrote the prompt
 public class GradingFragment extends Fragment {
+    RecyclerView rvGrading;
+    List<Response> responses;
+    GradingAdapter adapter;
+    LinearLayoutManager llm;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -61,5 +79,27 @@ public class GradingFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_grading, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @NonNull Bundle savedInstanceState){
+        rvGrading = view.findViewById(R.id.rvGrading);
+        responses = new ArrayList<Response>();
+        adapter = new GradingAdapter(view.getContext(), responses);
+        llm = new LinearLayoutManager(view.getContext());
+
+        rvGrading.setAdapter(adapter);
+        rvGrading.setLayoutManager(llm);
+
+        ParseQuery<Response> query = ParseQuery.getQuery(Response.class);
+        query.whereEqualTo("gradingUser", ParseUser.getCurrentUser());
+        query.whereEqualTo("graded", false);
+        query.findInBackground(new FindCallback<Response>() {
+            public void done(List<Response> objects, ParseException e) {
+                responses.addAll(objects);
+                adapter.notifyDataSetChanged();
+            }
+        });
+
     }
 }

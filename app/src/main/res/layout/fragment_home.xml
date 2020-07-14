@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:background="#FFFFFF"
             app:cardBackgroundColor="#ffffff"
-            app:cardCornerRadius="8dp">
+            app:cardCornerRadius="12dp">
 
             <TextView
                 android:id="@+id/tvPrompt1"
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/mcvContainer1"
             android:layout_marginTop="20dp"
-            app:cardCornerRadius="8dp">
+            app:cardCornerRadius="12dp">
 
             <TextView
                 android:id="@+id/tvPrompt2"
@@ -57,7 +57,7 @@
             android:layout_alignParentStart="false"
             android:layout_alignParentBottom="false"
             android:layout_marginTop="20dp"
-            app:cardCornerRadius="8dp">
+            app:cardCornerRadius="12dp">
 
             <TextView
                 android:id="@+id/tvPrompt3"

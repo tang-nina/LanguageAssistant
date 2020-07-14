@@ -26,7 +26,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:layout_toStartOf="@+id/tvDate"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 tools:text="A prompt here." />
 
             <TextView
@@ -44,6 +44,7 @@
                 android:layout_below="@+id/tvPrompt"
                 android:layout_alignParentStart="true"
                 android:layout_marginTop="16dp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 tools:text="a written response" />
         </RelativeLayout>
     </com.google.android.material.card.MaterialCardView>
@@ -61,7 +62,7 @@
 
     <TextView
         android:id="@+id/tvScore"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvNoGrade"
         android:layout_alignParentStart="true"
@@ -72,7 +73,7 @@
 
     <TextView
         android:id="@+id/tvFeedback"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvScore"
         android:layout_alignParentStart="true"
