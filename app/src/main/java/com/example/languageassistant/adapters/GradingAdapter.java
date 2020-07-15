@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.languageassistant.R;
+import com.example.languageassistant.models.Grading;
 import com.example.languageassistant.models.Response;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
@@ -90,18 +91,21 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
 
                         if(e == null){
 
-                            ParseUser user = ParseUser.getCurrentUser();
+                            Grading grading = (Grading) ParseUser.getCurrentUser().getParseObject("grading");
 
-                            //try catch in case. I really don't know why this works sometimes and other times it doesn't.
-                            try {
-                                user.put("totalResponsesGraded", ((int) user.getNumber("totalResponsesGraded")) + 1);
-                                user.put("responsesLeftToGrade", ((int) user.getNumber("responsesLeftToGrade")) - 1);
-                            }catch(Exception exception){
+                            grading.addGraded();
+                            grading.subtractLeftToGrade();
 
-                            }
+//                            //try catch in case. I really don't know why this works sometimes and other times it doesn't.
+//                            try {
+//                                user.put("totalResponsesGraded", ((int) user.getNumber("totalResponsesGraded")) + 1);
+//                                user.put("responsesLeftToGrade", ((int) user.getNumber("responsesLeftToGrade")) - 1);
+//                            }catch(Exception exception){
+//
+//                            }
 
 
-                            user.saveInBackground(new SaveCallback() {
+                            grading.saveInBackground(new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
                                     if(e == null){
@@ -114,7 +118,6 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
 
                                     }else{
                                         System.out.println("ISNT WORKING");
-
                                     }
 
                                 }

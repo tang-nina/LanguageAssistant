@@ -4,6 +4,7 @@ import android.text.format.DateUtils;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,8 +20,29 @@ public class Response extends ParseObject {
     public static final String KEY_GRADED = "graded";
     public static final String KEY_GRADE = "grade";
     public static final String KEY_COMMENTS = "additionalComments";
+    public static final String KEY_CREATED = "createdAt";
 
     public Response(){}
+
+    public static void createNewResponse(String answer, String prompt) {
+        Response newResponse = new Response();
+        newResponse.put(KEY_RESPONDER, ParseUser.getCurrentUser());
+        newResponse.put(KEY_ANSWER_WRITTEN, answer);
+        newResponse.put(KEY_PROMPT, prompt);
+
+//figure out grading user and put that in - get all grading objects, then see which one is the bext
+        ParseUser grader = ParseUser.getCurrentUser();//TEMPORARILY
+
+        newResponse.put(KEY_GRADER, grader);
+
+        //update grading user's Grading
+        Grading grading = (Grading) grader.getParseObject("grading");
+        //System.out.println(grading);
+        grading.addLeftToGrade();
+
+        newResponse.saveInBackground();
+        grading.saveInBackground();
+    }
 
     //time response was submitted, not the time of grading.
     public Date getTimestamp(){

@@ -85,12 +85,12 @@ public class GradedFragment extends Fragment{
         responses = new ArrayList<Response>();
         adapter = new GradedAdapter(view.getContext(), responses);
         llm = new LinearLayoutManager(view.getContext());
-
         rvGraded.setAdapter(adapter);
         rvGraded.setLayoutManager(llm);
 
         ParseQuery<Response> query = ParseQuery.getQuery(Response.class);
         query.whereEqualTo("respondingUser", ParseUser.getCurrentUser());
+        query.addDescendingOrder(Response.KEY_CREATED);
         query.findInBackground(new FindCallback<Response>() {
             public void done(List<Response> objects, ParseException e) {
                 responses.addAll(objects);

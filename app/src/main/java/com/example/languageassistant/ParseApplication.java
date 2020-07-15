@@ -2,6 +2,7 @@ package com.example.languageassistant;
 
 import android.app.Application;
 
+import com.example.languageassistant.models.Grading;
 import com.example.languageassistant.models.Prompt;
 import com.example.languageassistant.models.Response;
 import com.parse.Parse;
@@ -27,6 +28,8 @@ public class ParseApplication extends Application {
 
         ParseObject.registerSubclass(Prompt.class);
         ParseObject.registerSubclass(Response.class);
+        ParseObject.registerSubclass(Grading.class);
+
 
 
         // set applicationId, and server server based on the values in the Heroku settings.

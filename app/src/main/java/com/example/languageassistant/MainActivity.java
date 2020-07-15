@@ -7,17 +7,18 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.languageassistant.fragments.GradedFragment;
 import com.example.languageassistant.fragments.GradingFragment;
 import com.example.languageassistant.fragments.HomeFragment;
 import com.example.languageassistant.fragments.ProfileFragment;
+import com.example.languageassistant.fragments.RespondFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  implements HomeFragment.OnItemSelectedListener, RespondFragment.OnItemSelectedListener{
     BottomNavigationView bottomNavigationView;
     final FragmentManager fragmentManager = getSupportFragmentManager();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,5 +66,21 @@ public class MainActivity extends AppCompatActivity {
 
         bottomNavigationView.setSelectedItemId(R.id.action_home); //default tab open
 
+    }
+
+    @Override
+    public void onPromptSelected(String prompt) {
+      FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+      RespondFragment fragmentRespond = RespondFragment.newInstance(prompt);
+      ft.replace(R.id.flContainer, fragmentRespond);
+      ft.addToBackStack(null);
+      ft.commit();
+    }
+
+
+    @Override
+    public void onAnswerSubmitted() {
+        HomeFragment fragmentHome = new HomeFragment();
+        fragmentManager.beginTransaction().replace(R.id.flContainer, fragmentHome).commit();
     }
 }

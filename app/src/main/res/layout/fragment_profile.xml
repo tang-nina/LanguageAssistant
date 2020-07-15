@@ -85,7 +85,7 @@
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         tools:text="Target Language: " />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLinkFb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

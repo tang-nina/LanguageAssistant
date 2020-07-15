@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.example.languageassistant.LoginActivity;
 import com.example.languageassistant.R;
+import com.google.android.material.button.MaterialButton;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseUser;
@@ -46,14 +46,14 @@ public class ProfileFragment extends Fragment {
 
     ParseUser user;
 
-    Button btnLogout;
+    MaterialButton btnLogout;
     ImageView ivProfilePic;
     TextView tvName;
     TextView tvUsername;
     ImageView ivCamera;
     TextView tvNativeLang;
     TextView tvTargetLang;
-    Button btnLinkFb;
+    MaterialButton btnLinkFb;
     TextView tvConvoBuddy;
 
     // TODO: Rename parameter arguments, choose names that match

@@ -94,6 +94,7 @@ public class GradingFragment extends Fragment {
         ParseQuery<Response> query = ParseQuery.getQuery(Response.class);
         query.whereEqualTo("gradingUser", ParseUser.getCurrentUser());
         query.whereEqualTo("graded", false);
+        query.addDescendingOrder(Response.KEY_CREATED);
         query.findInBackground(new FindCallback<Response>() {
             public void done(List<Response> objects, ParseException e) {
                 responses.addAll(objects);
