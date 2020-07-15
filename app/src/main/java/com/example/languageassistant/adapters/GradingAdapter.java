@@ -92,8 +92,13 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
 
                             ParseUser user = ParseUser.getCurrentUser();
 
-                            user.put("totalResponsesGraded", ((int) user.getNumber("totalResponsesGraded")) + 1);
-                            user.put("responsesLeftToGrade", ((int) user.getNumber("responsesLeftToGrade")) - 1);
+                            //try catch in case. I really don't know why this works sometimes and other times it doesn't.
+                            try {
+                                user.put("totalResponsesGraded", ((int) user.getNumber("totalResponsesGraded")) + 1);
+                                user.put("responsesLeftToGrade", ((int) user.getNumber("responsesLeftToGrade")) - 1);
+                            }catch(Exception exception){
+
+                            }
 
 
                             user.saveInBackground(new SaveCallback() {
@@ -147,7 +152,7 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
                             //pop up asking if they really meant to give a zero
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             builder.setCancelable(true);
-                            builder.setTitle("Please confirm.");
+                            //builder.setTitle("Please confirm.");
                             builder.setMessage("Are you sure you want to give a score of 0 to this response?");
                             builder.setPositiveButton("Confirm",
                                     new DialogInterface.OnClickListener() {

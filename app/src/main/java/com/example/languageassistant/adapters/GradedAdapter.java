@@ -92,6 +92,7 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
                             tvScore.setVisibility(View.VISIBLE);
                             tvFeedback.setVisibility(View.VISIBLE);
 
+                            //should a try catch go around this in case???
                             tvScore.setText("Score: "+ response.getGrade());
 
                             if(response.getComments().equals("")){

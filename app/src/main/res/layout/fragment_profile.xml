@@ -1,13 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="8dp"
     tools:context=".fragments.ProfileFragment">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnLogout"
+    <RelativeLayout
+        android:id="@+id/rlProfileTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
+
+        <ImageView
+            android:id="@+id/ivProfilePic"
+            android:layout_width="112dp"
+            android:layout_height="112dp"
+            android:layout_centerVertical="true"
+            tools:src="@tools:sample/avatars" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_toEndOf="@+id/ivProfilePic">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLogout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvUsername"
+                android:layout_marginTop="8dp"
+                android:text="log out" />
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                android:textStyle="bold"
+                tools:text="Name" />
+
+            <TextView
+                android:id="@+id/tvUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvName"
+                android:layout_marginTop="4dp"
+                android:text="username"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/ivCamera"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignEnd="@+id/ivProfilePic"
+            android:layout_alignBottom="@+id/ivProfilePic"
+            android:layout_alignParentBottom="false"
+            android:layout_marginEnd="-5dp"
+            android:layout_marginBottom="-5dp"
+            android:src="@drawable/camera_shadow_fill" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvNativeLang"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="log out" />
-</FrameLayout>
+        android:layout_below="@+id/rlProfileTop"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="12dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        tools:text="Native Language (for grading): " />
+
+    <TextView
+        android:id="@+id/tvTargetLang"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvNativeLang"
+        android:layout_marginTop="4dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        tools:text="Target Language: " />
+
+    <Button
+        android:id="@+id/btnLinkFb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvFbInfo"
+        android:layout_alignParentEnd="false"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:text="Link" />
+
+    <TextView
+        android:id="@+id/tvConvoHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvTargetLang"
+        android:layout_marginTop="20dp"
+        android:text="Recommended Conversation Buddy"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tvConvoBuddy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvConvoHeader"
+        android:layout_marginTop="8dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        tools:text="some name and email here." />
+
+    <TextView
+        android:id="@+id/tvFbInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvConvoBuddy"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="Link your Facebook account for a better recommendation. "
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
+
+</RelativeLayout>
+
+
+
+
+
+
+
