@@ -3,9 +3,11 @@ package com.example.languageassistant.models;
 import android.text.format.DateUtils;
 
 import com.parse.ParseClassName;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -21,27 +23,31 @@ public class Response extends ParseObject {
     public static final String KEY_GRADE = "grade";
     public static final String KEY_COMMENTS = "additionalComments";
     public static final String KEY_CREATED = "createdAt";
+    public static final String KEY_DATE = "dateAnswered";
 
     public Response(){}
 
-    public static void createNewResponse(String answer, String prompt) {
-        Response newResponse = new Response();
-        newResponse.put(KEY_RESPONDER, ParseUser.getCurrentUser());
-        newResponse.put(KEY_ANSWER_WRITTEN, answer);
-        newResponse.put(KEY_PROMPT, prompt);
+    public ParseFile getRecordedAnswer(){
+        return getParseFile(KEY_ANSWER_RECORDED);
+    }
 
-//figure out grading user and put that in - get all grading objects, then see which one is the bext
-        ParseUser grader = ParseUser.getCurrentUser();//TEMPORARILY
+    public void setRecordedAnswer(File file){
+        put(KEY_ANSWER_RECORDED, new ParseFile(file));
+    }
 
-        newResponse.put(KEY_GRADER, grader);
 
-        //update grading user's Grading
-        Grading grading = (Grading) grader.getParseObject("grading");
-        //System.out.println(grading);
-        grading.addLeftToGrade();
+    public void setResponder(ParseUser user ){
+        put(Response.KEY_RESPONDER, user);
+    }
 
-        newResponse.saveInBackground();
-        grading.saveInBackground();
+
+    public void setGrader(ParseUser user ){
+        put(Response.KEY_GRADER, user);
+    }
+
+    //format: "Mmm DD YYYY"
+    public void setDateAnswered(String formattedDate){
+        put(Response.KEY_DATE, formattedDate);
     }
 
     //time response was submitted, not the time of grading.
@@ -90,6 +96,7 @@ public class Response extends ParseObject {
     public void setComments(String comments){
         put(KEY_COMMENTS, comments);
     }
+
 
     public static String getRelativeTimeAgo(String rawJsonDate) {
         String twitterFormat = "EEE MMM dd HH:mm:ss zzz yyyy";

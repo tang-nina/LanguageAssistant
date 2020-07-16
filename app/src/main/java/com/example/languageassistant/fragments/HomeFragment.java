@@ -1,6 +1,7 @@
 package com.example.languageassistant.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.languageassistant.R;
@@ -140,16 +142,17 @@ public class HomeFragment extends Fragment {
                         tvPrompt2.setText(prompts[1]);
                         tvPrompt3.setText(prompts[2]);
 
-
                         //check if user has already responded to them
                         ParseQuery<Response> queryResponded = ParseQuery.getQuery(Response.class);
-                        final Date d = new Date();
+                        String today = (new Date()).toString();
+                        String formattedToday = today.substring(4, 11) + today.substring(24);
+                        System.out.println(formattedToday);
 
-                        queryResponded.whereEqualTo(Response.KEY_CREATED, d);
+                        queryResponded.whereEqualTo(Response.KEY_DATE, formattedToday);
                         queryResponded.findInBackground(new FindCallback<Response>() {
                             public void done(List<Response> objects, ParseException e) {
                                 if(e==null){
-                                    if(objects.size() != 0 && objects.size() < 3){
+                                    if(objects.size() != 0 && objects.size() <= 3){
                                         for(Response r: objects){
 
                                             String curPrompt = r.getPrompt();
@@ -165,15 +168,12 @@ public class HomeFragment extends Fragment {
                                         Toast.makeText(getContext(), "Something is wrong", Toast.LENGTH_SHORT).show();
                                     }
 
-                                    System.out.println(d.toString());
-
-
                                     mcvContainer1.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
                                             if(flags[0] == true){
-                                                //if already responded, open "you already responsded"
-                                                Toast.makeText(view.getContext(), "You have already responded to this prompt. Please check the graded section to see your response.", Toast.LENGTH_SHORT).show();
+                                                //pop up asking if they really meant to give a zero
+                                                dialogAlreadyResponded();
                                             }else{
                                                 //else send to new fragment
                                                 listener.onPromptSelected(prompts[0]);
@@ -186,7 +186,7 @@ public class HomeFragment extends Fragment {
                                         public void onClick(View view) {
                                             if(flags[1] == true){
                                                 //if already responded, open "you already responsded"
-                                                Toast.makeText(view.getContext(), "You have already responded to this prompt. Please check the graded section to see your response.", Toast.LENGTH_SHORT).show();
+                                                dialogAlreadyResponded();
                                             }else{
                                                 //else send to new fragment
                                                 listener.onPromptSelected(prompts[1]);
@@ -199,7 +199,7 @@ public class HomeFragment extends Fragment {
                                         public void onClick(View view) {
                                             if(flags[2] == true){
                                                 //if already responded, open "you already responsded"
-                                                Toast.makeText(view.getContext(), "You have already responded to this prompt. Please check the graded section to see your response.", Toast.LENGTH_SHORT).show();
+                                                dialogAlreadyResponded();
                                             }else{
                                                 //else send to new fragment
                                                 listener.onPromptSelected(prompts[2]);
@@ -222,5 +222,22 @@ public class HomeFragment extends Fragment {
         });
 
 
+    }
+
+    private void dialogAlreadyResponded(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setCancelable(true);
+        builder.setTitle("You have already responded to this prompt.");
+        builder.setMessage("You can check the graded section to see your previous responses.");
+
+        builder.setPositiveButton("Ok",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

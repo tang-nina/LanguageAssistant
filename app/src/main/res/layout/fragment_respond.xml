@@ -7,6 +7,16 @@
     android:layout_margin="8dp"
     tools:context=".fragments.RespondFragment">
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSubmitRecording"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rlPlay"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="8dp"
+        android:text="Submit"
+        android:visibility="gone" />
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/mcvPromptContainer"
         android:layout_width="match_parent"
@@ -73,5 +83,87 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="20dp"
         android:text="Submit" />
+
+    <RelativeLayout
+        android:id="@+id/rlRecording"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnSubmit"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="24dp">
+
+        <TextView
+            android:id="@+id/tvRecord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="false"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:text="Or record a response:"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
+
+        <ImageView
+            android:id="@+id/ivStart"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/tvRecord"
+            android:tag = "record_button"
+            android:src="@drawable/ic_baseline_fiber_manual_record_24" />
+
+        <TextView
+            android:id="@+id/tvRecordInstructions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/ivStart"
+            android:text="Press to start recording." />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rlPlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rlRecording"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="8dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvPlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="false"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:text="Play recording:"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
+
+        <ImageView
+            android:id="@+id/ivPlay"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/tvPlay"
+            android:src="@drawable/ic_baseline_play_circle_outline_24"
+            android:tag="play_button" />
+
+        <TextView
+            android:id="@+id/tvPlayInstructions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/ivPlay"
+            android:text="Press to play." />
+
+    </RelativeLayout>
+
 
 </RelativeLayout>
