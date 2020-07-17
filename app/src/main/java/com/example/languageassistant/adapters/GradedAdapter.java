@@ -20,6 +20,9 @@ import com.google.android.material.card.MaterialCardView;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * An adapter for a recycler view that displays graded responses.
+ */
 public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder> {
     Context context;
     List<Response> responses;
@@ -60,6 +63,9 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
+    /**
+     * A view holder for each graded response.
+     */
     class ViewHolder extends RecyclerView.ViewHolder{
 
         boolean flag; //false if feedback not showing, true if feedback showing
@@ -72,6 +78,7 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
         TextView tvFeedback;
         MaterialCardView mcvContainer;
 
+        //audio related UI elements
         ImageView ivPlay;
         TextView tvPlaying;
 
@@ -89,11 +96,7 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
             ivPlay = itemView.findViewById(R.id.ivPlay);
             tvPlaying = itemView.findViewById(R.id.tvPlaying);
 
-            flag = false;
-            //all of the flag stuff as implemented means that
-            //if you open feedback, scroll past it and then come back to it, the feedback will
-            //be reset to not showing
-
+            flag = false; //default feedback not showing
         }
 
         public void bind(final Response response) {
@@ -108,24 +111,18 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
                     if(flag == false){
                         if(response.getGraded() == false){
                             tvNoGrade.setVisibility(View.VISIBLE);
-                        }else if(response.getGraded() == true){
+                        }else{
                             tvScore.setVisibility(View.VISIBLE);
                             tvFeedback.setVisibility(View.VISIBLE);
-
-                            //should a try catch go around this in case???
-                            tvScore.setText("Score: "+ response.getGrade());
+                            tvScore.setText(context.getString(R.string.score_label) + " " + response.getGrade());
 
                             if(response.getComments().equals("")){
-                                tvFeedback.setText("No additional comments.");
+                                tvFeedback.setText(context.getString(R.string.no_add_comments));
                             }else{
-                                tvFeedback.setText("Additional Comments: "+response.getComments());
+                                tvFeedback.setText(context.getString(R.string.add_comments) + " " + response.getComments());
                             }
-                        }else{
-                            System.out.println("SOMETHING WENT WRONG, CHECK DEFAULT VAL FOR GRADED");
                         }
-
                         flag=true;
-
                     }else{
                         tvNoGrade.setVisibility(View.GONE);
                         tvScore.setVisibility(View.GONE);
@@ -137,12 +134,10 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
                 }
             });
 
-
             tvPrompt.setText(response.getPrompt());
             tvDate.setText(Response.getRelativeTimeAgo(response.getTimestamp().toString()));
 
-
-            if(response.getRecordedAnswer()!= null){
+            if(response.getRecordedAnswer()!= null){//if the response was recorded
                 final MediaPlayer mediaPlayer = new MediaPlayer();
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 String url = response.getRecordedAnswer().getUrl();
@@ -160,7 +155,7 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
                     }
                 });
 
-                tvResponse.setText("Play recording: ");
+                tvResponse.setText(context.getString(R.string.play_recording) + " ");
                 ivPlay.setVisibility(View.VISIBLE);
                 ivPlay.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -171,16 +166,10 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
                         }
                     }
                 });
-                //Thu Jul 16 10:36:13 EDT 2020
-                //    Wed Jul 15 18:14:02 EDT 2020
-
-            }else{
+            }else{ //if the response was written
                 ivPlay.setVisibility(View.GONE);
                 tvPlaying.setVisibility(View.GONE);
                 tvResponse.setText(response.getWrittenAnswer());
-                //Thu Jul 16 10:36:13 EDT 2020
-                //    Wed Jul 15 18:14:02 EDT 2020
-
             }
 
         }

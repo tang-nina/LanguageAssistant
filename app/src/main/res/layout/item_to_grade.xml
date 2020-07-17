@@ -71,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvResponse"
                 android:layout_marginTop="8dp"
-                android:text="Please give your feedback on this response."
+                android:text="@string/feedback"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 android:textSize="14sp" />
 
@@ -82,7 +82,7 @@
                 android:layout_below="@+id/tilComments"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="12dp"
-                android:text="Submit" />
+                android:text="@string/submit" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilComments"
@@ -92,7 +92,7 @@
                 android:layout_alignParentStart="false"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="8dp"
-                android:hint="Any additional comments?"
+                android:hint="@string/any_add_comments"
                 app:counterEnabled="true"
                 app:counterMaxLength="500">
 
@@ -122,7 +122,7 @@
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="15dp"
                 android:layout_toEndOf="@+id/ivPlayAudio"
-                android:text="playing"
+                android:text="@string/playing"
                 android:visibility="gone" />
 
 

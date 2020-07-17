@@ -27,14 +27,13 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link GradingFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * A fragment for displaying responses that still need to be graded
  */
 
-//date is the date that the responding user wrote the prompt
 public class GradingFragment extends Fragment {
     private static final String TAG = "GradingFragment";
+    private static final int NUMBER_TO_LOAD = 20;
+
     RecyclerView rvGrading;
     List<Response> responses;
     GradingAdapter adapter;
@@ -45,51 +44,18 @@ public class GradingFragment extends Fragment {
     private EndlessRecyclerViewScrollListener scrollListener;
     Date lastPostTime;
 
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     public GradingFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment GradingFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static GradingFragment newInstance(String param1, String param2) {
-        GradingFragment fragment = new GradingFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_grading, container, false);
     }
 
@@ -97,55 +63,45 @@ public class GradingFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @NonNull Bundle savedInstanceState){
         rvGrading = view.findViewById(R.id.rvGrading);
         tvNothingMessage = view.findViewById(R.id.tvNothingMessage);
+
         responses = new ArrayList<Response>();
         adapter = new GradingAdapter(view.getContext(), responses, this);
         llm = new LinearLayoutManager(view.getContext());
-
         rvGrading.setAdapter(adapter);
         rvGrading.setLayoutManager(llm);
 
+        // Setup refresh listener
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);
-        // Setup refresh listener which triggers new data loading
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // Your code to refresh the list here.
-                // Make sure you call swipeContainer.setRefreshing(false)
-                // once the network request has completed successfully.
                 getGradingResponses(true);
             }
         });
-
-        // Configure the refreshing colors
         swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-
+        // set up endless scroll
         scrollListener = new EndlessRecyclerViewScrollListener(llm) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to the bottom of the list
-                loadNextDataFromApi(page);
+                loadNextDataFromApi();
             }
         };
-        // Adds the scroll listener to RecyclerView
         rvGrading.addOnScrollListener(scrollListener);
 
+        //load data
         getGradingResponses(false);
     }
 
-
-    // Append the next page of data into the adapter
-    // This method probably sends out a network request and appends new data items to your adapter.
-    public void loadNextDataFromApi(int offset) {
-
+    //for loading older data in endless scroll
+    private void loadNextDataFromApi() {
         ParseQuery<Response> query = ParseQuery.getQuery(Response.class);
-        query.whereEqualTo("gradingUser", ParseUser.getCurrentUser());
-        query.whereEqualTo("graded", false);
-        query.setLimit(20);
+        query.whereEqualTo(Response.KEY_GRADER, ParseUser.getCurrentUser());
+        query.whereEqualTo(Response.KEY_GRADED, false);
+        query.setLimit(NUMBER_TO_LOAD);
         query.addDescendingOrder(Response.KEY_CREATED);
         if(lastPostTime != null){
             query.whereLessThan(Response.KEY_CREATED, lastPostTime);
@@ -166,19 +122,11 @@ public class GradingFragment extends Fragment {
         });
     }
 
-    public void setTvNothingMessage(){
-        if(responses.size()==0){
-            tvNothingMessage.setVisibility(View.VISIBLE);
-        }else{
-            tvNothingMessage.setVisibility(View.GONE);
-        }
-    }
-
     private void getGradingResponses(final boolean onRefresh){
         ParseQuery<Response> query = ParseQuery.getQuery(Response.class);
-        query.whereEqualTo("gradingUser", ParseUser.getCurrentUser());
-        query.whereEqualTo("graded", false);
-        query.setLimit(20);
+        query.whereEqualTo(Response.KEY_GRADER, ParseUser.getCurrentUser());
+        query.whereEqualTo(Response.KEY_GRADED, false);
+        query.setLimit(NUMBER_TO_LOAD);
         query.addDescendingOrder(Response.KEY_CREATED);
         query.findInBackground(new FindCallback<Response>() {
             public void done(List<Response> objects, ParseException e) {
@@ -195,16 +143,23 @@ public class GradingFragment extends Fragment {
                             adapter.notifyDataSetChanged();
                         }
                     }else{
+                        //if no data to display, show placeholder message
                         tvNothingMessage.setVisibility(View.VISIBLE);
                         swipeContainer.setRefreshing(false);
                     }
                 }else{
                     Log.e(TAG, "done: ",e );
-
                 }
-
             }
         });
+    }
 
+    //method to ensure placeholder message is correctly shown/change it to correct visibility
+    public void setTvNothingMessage(){
+        if(responses.size()==0){
+            tvNothingMessage.setVisibility(View.VISIBLE);
+        }else{
+            tvNothingMessage.setVisibility(View.GONE);
+        }
     }
 }

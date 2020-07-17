@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:text="You have no responses you need to grade right now.  "
+        android:text="@string/none_to_grade"
         android:visibility="visible" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

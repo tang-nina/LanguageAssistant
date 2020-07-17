@@ -36,45 +36,38 @@ import java.io.IOException;
 import java.util.Date;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link RespondFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * A fragment for responding to prompts.
  */
 public class RespondFragment extends Fragment {
     private static final String TAG = "RespondFragment";
-    private static final String ARG_PARAM1 = "prompt";
-    public static final int MAX_COMMENT_LENGTH = 1000;
-
+    private static final String LOG_TAG = "AudioRecordTest";
+    private static final String PROMPT = "prompt";
+    private static final String RECORD_TAG = "record_button";
+    private static final String STOP_TAG = "stop_button";
+    private static final String KEY_GRADING = "grading";
+    private static final int MAX_COMMENT_LENGTH = 1000;
 
     // File path of recorded audio
-    private File mFileName ;
-
-    private static final String LOG_TAG = "AudioRecordTest";
+    private File mFileName;
     MediaRecorder mediaRecorder;
     MediaPlayer mediaPlayer;
 
-    private OnItemSelectedListener listener;
-
-    // Define the events that the fragment will use to communicate
+    // Interface for interacting with main activity
     public interface OnItemSelectedListener {
-        // This can be any number of events to be sent to the activity
         public void onAnswerSubmitted();
-        //prob the number or the prompt they responded to?
-        // I may not even need to send anything if the home fragment checks the prompts by itself
-
     }
 
+    private OnItemSelectedListener listener;
     private String prompt;
     TextView tvPrompt;
     TextInputEditText tietResponse;
     MaterialButton btnSubmit;
 
-
+    //audio related
     ImageView ivRecord;
     ImageView ivPlay;
     RelativeLayout rlPlay;
     MaterialButton btnSubmitRecording;
-
     TextView tvRecordInstructions;
     TextView tvPlayInstructions;
 
@@ -85,13 +78,11 @@ public class RespondFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment RespondFragment.
      */
     public static RespondFragment newInstance(String prompt) {
         RespondFragment fragment = new RespondFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_PARAM1, prompt);
+        args.putSerializable(PROMPT, prompt);
         fragment.setArguments(args);
         return fragment;
     }
@@ -100,14 +91,13 @@ public class RespondFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            prompt = getArguments().getString(ARG_PARAM1);
+            prompt = getArguments().getString(PROMPT);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_respond, container, false);
     }
 
@@ -139,40 +129,37 @@ public class RespondFragment extends Fragment {
         tvPrompt.setText(prompt);
         mFileName = getFileUri("audiorecordtest.3gp");
 
+        //submit the written response
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               String answer = tietResponse.getText().toString();
+                String answer = tietResponse.getText().toString();
 
-                if (answer.length() > MAX_COMMENT_LENGTH){
-                    Toast.makeText(view.getContext(), "Could not submit - your answer is too long.", Toast.LENGTH_SHORT).show();
-                }else if (answer.length() == 0){
-                    Toast.makeText(view.getContext(), "Could not submit - you did not respond yet.", Toast.LENGTH_SHORT).show();
-                }else{
+                if (answer.length() > MAX_COMMENT_LENGTH) { //too long
+                    Toast.makeText(view.getContext(), view.getContext().getString(R.string.answer_long), Toast.LENGTH_SHORT).show();
+                } else if (answer.length() == 0) { //no response
+                    Toast.makeText(view.getContext(), view.getContext().getString(R.string.no_response), Toast.LENGTH_SHORT).show();
+                } else {
                     makeNewWrittenResponse(prompt, answer);
                 }
             }
         });
 
+        //record answer
         ivRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Verify that the device has a mic first
                 PackageManager pmanager = getActivity().getPackageManager();
                 if (pmanager.hasSystemFeature(PackageManager.FEATURE_MICROPHONE)) {
-                    // Set the file location for the audio
-                    //mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-                    //mFileName += "/audiorecordtest.3gp";
-                    // Create the recorder
-
                     if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                        //ask for audio permission if none
                         ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, 0);
                     } else {
-
-                        if(ivRecord.getTag().equals("record_button")){
+                        if (ivRecord.getTag().equals(RECORD_TAG)) {
                             Glide.with(getContext()).load(R.drawable.ic_baseline_stop_24).into(ivRecord);
-                            ivRecord.setTag("stop_button");
-                            tvRecordInstructions.setText("Press to stop recording.");
+                            ivRecord.setTag(STOP_TAG);
+                            tvRecordInstructions.setText(getContext().getString(R.string.stop_recording));
 
                             rlPlay.setVisibility(View.INVISIBLE);
                             mediaRecorder = new MediaRecorder();
@@ -190,14 +177,14 @@ public class RespondFragment extends Fragment {
 
                             } catch (IOException e) {
                                 Log.e(LOG_TAG, "prepare() failed");
-                                System.out.println(""+e);    //to display the error
                             }
 
-                        }else{
+                        } else {
                             Glide.with(getContext()).load(R.drawable.ic_baseline_fiber_manual_record_24).into(ivRecord);
-                            ivRecord.setTag("record_button");
-                            tvRecordInstructions.setText("Press to start recording.");
+                            ivRecord.setTag(RECORD_TAG);
+                            tvRecordInstructions.setText(getContext().getString(R.string.start_recording));
 
+                            //stop recording
                             mediaRecorder.stop();
                             mediaRecorder.reset();
                             mediaRecorder.release();
@@ -205,55 +192,51 @@ public class RespondFragment extends Fragment {
                             rlPlay.setVisibility(View.VISIBLE);
                             btnSubmitRecording.setVisibility(View.VISIBLE);
 
+                            //prepare audio player
                             mediaPlayer = new MediaPlayer();
                             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                             try {
                                 mediaPlayer.setDataSource(mFileName.getAbsolutePath());
-                                mediaPlayer.prepare(); // must call prepare first
+                                mediaPlayer.prepare();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-
                         }
                     }
 
                 } else { // no mic on device
-                    Toast.makeText(getContext(), "This device doesn't have a mic!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), getContext().getString(R.string.no_mic), Toast.LENGTH_LONG).show();
                 }
             }
         });
 
 
+        //play previous recording
         ivPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-
                     @Override
                     public void onCompletion(MediaPlayer mp) {
-                        tvPlayInstructions.setText("Press to play.");
+                        tvPlayInstructions.setText(getContext().getString(R.string.press_play));
                     }
-
                 });
-                tvPlayInstructions.setText("playing");
+                tvPlayInstructions.setText(getContext().getString(R.string.playing));
                 mediaPlayer.start();
             }
         });
 
-
+        //submit audio response
         btnSubmitRecording.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if(mFileName == null){
-                    Toast.makeText(view.getContext(), "You did not record anything yet.", Toast.LENGTH_SHORT).show();
-
-                }else{
-                    if(mediaRecorder != null){
+                if (mFileName == null) {
+                    Toast.makeText(view.getContext(), getContext().getString(R.string.no_recording), Toast.LENGTH_SHORT).show();
+                } else {
+                    if (mediaRecorder != null) {
                         mediaRecorder.release();
                     }
-
-                    if(mediaPlayer !=null){
+                    if (mediaPlayer != null) {
                         mediaPlayer.release();
                     }
                     makeNewAudioResponse(prompt, mFileName);
@@ -271,7 +254,7 @@ public class RespondFragment extends Fragment {
         File mediaStorageDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_MUSIC), TAG);
 
         // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
             Log.d("here", "failed to create directory");
         }
 
@@ -279,31 +262,31 @@ public class RespondFragment extends Fragment {
         return new File(mediaStorageDir.getPath() + File.separator + fileName);
     }
 
-    private void makeNewWrittenResponse(String prompt, String answer){
+    //creates new Response with written answer on parse
+    private void makeNewWrittenResponse(String prompt, String answer) {
         Response newResponse = new Response();
         newResponse.setResponder(ParseUser.getCurrentUser());
         newResponse.setWrittenAnswer(answer);
         newResponse.setPrompt(prompt);
 
-       String today = (new Date()).toString();
-       String formattedToday = today.substring(4, 11) + today.substring(24);
-       newResponse.setDateAnswered(formattedToday);
+        String today = (new Date()).toString();
+        String formattedToday = today.substring(4, 11) + today.substring(24);
+        newResponse.setDateAnswered(formattedToday);
 
         //figure out grading user and put that in - get all grading objects, then see which one is the bext
         final ParseUser grader = ParseUser.getCurrentUser();//TEMPORARILY
 
         newResponse.setGrader(grader);
-
         newResponse.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 //update grading user's Grading
-                Grading grading = (Grading) grader.getParseObject("grading");
+                Grading grading = (Grading) grader.getParseObject(KEY_GRADING);
                 grading.addLeftToGrade();
                 grading.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
-                        Toast.makeText(getContext(), "Response submitted!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getContext().getString(R.string.response_submitted), Toast.LENGTH_SHORT).show();
                         listener.onAnswerSubmitted();
                     }
                 });
@@ -311,8 +294,8 @@ public class RespondFragment extends Fragment {
         });
     }
 
-    private void makeNewAudioResponse(String prompt, File recording){
-
+    //creates new Response with audio answer on parse
+    private void makeNewAudioResponse(String prompt, File recording) {
         Response newResponse = new Response();
         newResponse.setResponder(ParseUser.getCurrentUser());
         newResponse.setRecordedAnswer(recording);
@@ -326,22 +309,20 @@ public class RespondFragment extends Fragment {
         final ParseUser grader = ParseUser.getCurrentUser();//TEMPORARILY
 
         newResponse.setGrader(grader);
-
         newResponse.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 //update grading user's Grading
-                Grading grading = (Grading) grader.getParseObject("grading");
+                Grading grading = (Grading) grader.getParseObject(KEY_GRADING);
                 grading.addLeftToGrade();
                 grading.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
-                        Toast.makeText(getContext(), "Response submitted!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getContext().getString(R.string.response_submitted), Toast.LENGTH_SHORT).show();
                         listener.onAnswerSubmitted();
                     }
                 });
             }
         });
-
     }
 }

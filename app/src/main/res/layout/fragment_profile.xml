@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvUsername"
                 android:layout_marginTop="8dp"
-                android:text="log out" />
+                android:text="@string/logout" />
 
             <TextView
                 android:id="@+id/tvName"
@@ -48,8 +48,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvName"
                 android:layout_marginTop="4dp"
-                android:text="username"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                tools:text="username" />
 
         </RelativeLayout>
 
@@ -93,7 +93,7 @@
         android:layout_alignParentEnd="false"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
-        android:text="Link" />
+        android:text="@string/link" />
 
     <TextView
         android:id="@+id/tvConvoHeader"
@@ -101,7 +101,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvTargetLang"
         android:layout_marginTop="20dp"
-        android:text="Recommended Conversation Buddy"
+        android:text="@string/rec_buddy"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         android:textSize="18sp" />
 
@@ -121,7 +121,7 @@
         android:layout_below="@+id/tvConvoBuddy"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:text="Link your Facebook account for a better recommendation. "
+        android:text="@string/fb_instruc"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
 
 </RelativeLayout>

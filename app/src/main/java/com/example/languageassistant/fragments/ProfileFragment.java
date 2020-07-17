@@ -33,13 +33,16 @@ import java.io.File;
 import static android.app.Activity.RESULT_OK;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link ProfileFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * A fragment for displaying the profile of a user.
  */
 public class ProfileFragment extends Fragment {
     private static final String TAG = "ProfileFragment";
     public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 50;
+    private static final String KEY_NAME = "name";
+    private static final String KEY_NATIVE_LANG = "nativeLanguage";
+    private static final String KEY_TARGET_LANG = "targetLanguage";
+    private static final String KEY_CONVO = "convoBuddy";
+    private static final String KEY_PROFILE_PIC = "profilePic";
 
     public String photoFileName = "photo.jpg";
     private File photoFile;
@@ -56,50 +59,18 @@ public class ProfileFragment extends Fragment {
     MaterialButton btnLinkFb;
     TextView tvConvoBuddy;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     public ProfileFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ProfileFragment newInstance(String param1, String param2) {
-        ProfileFragment fragment = new ProfileFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
@@ -118,7 +89,7 @@ public class ProfileFragment extends Fragment {
         tvConvoBuddy = view.findViewById(R.id.tvConvoBuddy);
         btnLogout = view.findViewById(R.id.btnLogout);
 
-
+        //log out
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -129,13 +100,13 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        tvName.setText(user.getString("name"));
-        tvUsername.setText("Username: "+user.getUsername());
-        tvNativeLang.setText("Native Language (for grading): "+user.getString("nativeLanguage"));
-        tvTargetLang.setText("Target Language: "+user.getString("targetLanguage"));
+        tvName.setText(user.getString(KEY_NAME));
+        tvUsername.setText(getContext().getString(R.string.username) + " " + user.getUsername());
+        tvNativeLang.setText(getContext().getString(R.string.native_lang) + " " + user.getString(KEY_NATIVE_LANG));
+        tvTargetLang.setText(getContext().getString(R.string.target_lang) + " " + user.getString(KEY_TARGET_LANG));
 
-        if(user.get("convoBuddy") == null){
-            tvConvoBuddy.setText("Coming soon!");
+        if(user.get(KEY_CONVO) == null){
+            tvConvoBuddy.setText(getContext().getString(R.string.coming_soon));
         }else{
             //unfinished
         }
@@ -148,17 +119,15 @@ public class ProfileFragment extends Fragment {
         });
 
         //load default pic
-        Glide.with(getContext()).load(user.getParseFile("profilePic").getUrl()).fitCenter().circleCrop().into(ivProfilePic);
-
+        Glide.with(getContext()).load(user.getParseFile(KEY_PROFILE_PIC).getUrl()).fitCenter().circleCrop().into(ivProfilePic);
 
         ivCamera.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                launchCamera();
+                launchCamera(); //take a photo
             }
         });
     }
-
 
     public void launchCamera(){
         // create Intent to take a picture and return control to the calling application
@@ -209,19 +178,20 @@ public class ProfileFragment extends Fragment {
                 Glide.with(getContext()).load(photoFile).fitCenter().circleCrop().into(ivProfilePic);
                 sendPost(user, photoFile);
             } else { // Result was a failure
-                Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getContext().getString(R.string.pic_error), Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+    //saves profile picture to Parse user
     private void sendPost(ParseUser user, File photo){
-        user.put("profilePic", new ParseFile(photo));
+        user.put(KEY_PROFILE_PIC, new ParseFile(photo));
         user.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e != null){
                     Log.e(TAG, "done: error while saving", e);
-                    Toast.makeText(getContext(), "Error while saving", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), getContext().getString(R.string.save_error), Toast.LENGTH_SHORT).show();
                 }
             }
         });

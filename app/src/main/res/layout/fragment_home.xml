@@ -51,7 +51,6 @@
             android:id="@+id/mcvContainer2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/mcvContainer1"
             android:layout_marginTop="20dp"
             android:layout_weight="1"
             app:cardCornerRadius="12dp">
@@ -80,8 +79,6 @@
             android:id="@+id/mcvContainer3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/mcvContainer2"
-            android:layout_alignParentStart="false"
             android:layout_marginTop="20dp"
             android:layout_weight="1"
             app:cardCornerRadius="12dp">

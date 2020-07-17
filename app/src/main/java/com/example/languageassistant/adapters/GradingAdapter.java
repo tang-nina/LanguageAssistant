@@ -30,6 +30,9 @@ import com.parse.SaveCallback;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * An adapter for a recycler view tha displays responses that still need to be graded.
+ */
 public class GradingAdapter extends RecyclerView.Adapter<com.example.languageassistant.adapters.GradingAdapter.ViewHolder> {
     Context context;
     List<Response> responses;
@@ -60,8 +63,6 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
         return responses.size();
     }
 
-    /* Within the RecyclerView.Adapter class */
-
     // Clean all elements of the recycler
     public void clear() {
         responses.clear();
@@ -74,10 +75,12 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
         notifyDataSetChanged();
     }
 
-
+    /**
+     * A view holder for each grading response.
+     */
     class ViewHolder extends RecyclerView.ViewHolder {
-
         public static final int MAX_COMMENT_LENGTH = 500;
+        public static final String KEY_GRADING = "grading";
 
         MaterialCardView mcvContainer;
         TextView tvPrompt;
@@ -87,6 +90,7 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
         TextInputEditText tietComments;
         MaterialButton btnSubmit;
 
+        //audio related elements
         TextView tvPlaying;
         ImageView ivPlayAudio;
 
@@ -101,27 +105,23 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
             tietComments = itemView.findViewById(R.id.tietComments);
             btnSubmit = itemView.findViewById(R.id.btnSubmit);
 
-
             ivPlayAudio = itemView.findViewById(R.id.ivPlayAudio);
             tvPlaying = itemView.findViewById(R.id.tvPlaying);
         }
 
         public void bind(final Response response) {
-            //audio response
-            if (response.getRecordedAnswer() != null) {
+            if (response.getRecordedAnswer() != null) { //audio response
                 ivPlayAudio.setVisibility(View.VISIBLE);
 
                 tvPrompt.setText(response.getPrompt());
-                tvResponse.setText("Play recorded answer: ");
+                tvResponse.setText(context.getString(R.string.play_recording) + " ");
                 tvDate.setText(Response.getRelativeTimeAgo(response.getTimestamp().toString()));
 
                 final MediaPlayer mediaPlayer = new MediaPlayer();
-                // Set type to streaming
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 String url = response.getRecordedAnswer().getUrl();
-                // Set the data source to the remote URL
                 try {
-                    mediaPlayer.setDataSource(url);
+                    mediaPlayer.setDataSource(url); //setting data source
                     mediaPlayer.prepare();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -144,27 +144,23 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
                     }
                 });
 
-
                 btnSubmit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //does this need to be an int??? relating to how
-                        //graded shows and stores the scores
                         final float rating = rbRating.getRating();
                         final String comment = tietComments.getText().toString();
 
-                        if (comment.length() > MAX_COMMENT_LENGTH) {
-                            Toast.makeText(context, "Could not submit - your comments are too long.", Toast.LENGTH_SHORT).show();
-                        } else if (rating == 0.0) {
-                            //pop up asking if they really meant to give a zero
+                        if (comment.length() > MAX_COMMENT_LENGTH) { //comments are too long
+                            Toast.makeText(context, context.getString(R.string.comments_long), Toast.LENGTH_SHORT).show();
+                        } else if (rating == 0.0) { //pop up asking if they really meant to give a zero
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             builder.setCancelable(true);
-                            //builder.setTitle("Please confirm.");
-                            builder.setMessage("Are you sure you want to give a score of 0 to this response?");
-                            builder.setPositiveButton("Confirm",
+                            builder.setMessage(context.getString(R.string.confirm_question));
+                            builder.setPositiveButton(context.getString(R.string.confirm),
                                     new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
+                                            //they did intend to give a 0
                                             mediaPlayer.release();
                                             submitFeedback(response, rating, comment, getAdapterPosition());
                                         }
@@ -172,14 +168,14 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
                             builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    //nothing happens
+                                    //nothing is submitted if they did not intend to give a 0
                                 }
                             });
 
                             AlertDialog dialog = builder.create();
                             dialog.show();
 
-                        } else {
+                        } else { //everything is ok for a submission
                             mediaPlayer.release();
                             submitFeedback(response, rating, comment, getAdapterPosition());
                         }
@@ -189,44 +185,39 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
             } else { //written response
                 ivPlayAudio.setVisibility(View.GONE);
                 tvPrompt.setText(response.getPrompt());
-                //check if written or audio, but for now just assuming all is written
                 tvResponse.setText(response.getWrittenAnswer());
                 tvDate.setText(Response.getRelativeTimeAgo(response.getTimestamp().toString()));
 
                 btnSubmit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //does this need to be an int??? relating to how
-                        //graded shows and stores the scores
                         final float rating = rbRating.getRating();
                         final String comment = tietComments.getText().toString();
 
-                        if (comment.length() > MAX_COMMENT_LENGTH) {
-                            Toast.makeText(context, "Could not submit - your comments are too long.", Toast.LENGTH_SHORT).show();
-                        } else if (rating == 0.0) {
-                            //pop up asking if they really meant to give a zero
+                        if (comment.length() > MAX_COMMENT_LENGTH) { //comment is too long
+                            Toast.makeText(context, context.getString(R.string.comments_long), Toast.LENGTH_SHORT).show();
+                        } else if (rating == 0.0) { //pop up asking if they really meant to give a zero
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             builder.setCancelable(true);
-                            //builder.setTitle("Please confirm.");
-                            builder.setMessage("Are you sure you want to give a score of 0 to this response?");
-                            builder.setPositiveButton("Confirm",
+                            builder.setMessage(context.getString(R.string.confirm_question));
+                            builder.setPositiveButton(context.getString(R.string.confirm),
                                     new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
+                                            //score of 0 was intended
                                             submitFeedback(response, rating, comment, getAdapterPosition());
                                         }
                                     });
                             builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    //nothing happens
+                                    //nothing happens if 0 was not intended
                                 }
                             });
 
                             AlertDialog dialog = builder.create();
                             dialog.show();
-
-                        } else {
+                        } else { //submit if everything is good
                             submitFeedback(response, rating, comment, getAdapterPosition());
                         }
                     }
@@ -235,54 +226,43 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
             }
         }
 
+        //submits the feedback by adding the grading info to the parse response object
         private void submitFeedback(Response response, float rating, String comment, final int position) {
-
             response.setGrade((int) rating);
             response.setComments(comment);
             response.setGraded(true);
             response.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
-
                     if (e == null) {
-
-                        Grading grading = (Grading) ParseUser.getCurrentUser().getParseObject("grading");
-
+                        Grading grading = (Grading) ParseUser.getCurrentUser().getParseObject(KEY_GRADING);
                         grading.addGraded();
                         grading.subtractLeftToGrade();
                         grading.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
                                 if (e == null) {
-                                    Toast.makeText(context, "Your feedback has been saved successfully.", Toast.LENGTH_SHORT).show();
-                                    //clearing in case this affects other responses that get attached to the recycler view?
+                                    Toast.makeText(context, context.getString(R.string.feedback_saved), Toast.LENGTH_SHORT).show();
+
                                     rbRating.setRating(0);
                                     tietComments.getText().clear();
 
-                                    //should clear this entire card from the recycler view right away.
+                                    //clear the response from the recycler view right away.
                                     responses.remove(position);
                                     notifyDataSetChanged();
                                     gradingFragment.setTvNothingMessage();
 
                                 } else {
-                                    System.out.println("ISNT WORKING");
+                                    Toast.makeText(context, context.getString(R.string.save_again), Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
 
-
                     } else {
-                        System.out.println("HEREEEEEEEEEEEE ggrading adapter");
+                        Toast.makeText(context, context.getString(R.string.save_again), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
-
-
-
-
         }
-
     }
-
-
 }

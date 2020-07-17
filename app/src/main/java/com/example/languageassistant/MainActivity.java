@@ -16,7 +16,7 @@ import com.example.languageassistant.fragments.ProfileFragment;
 import com.example.languageassistant.fragments.RespondFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity  implements HomeFragment.OnItemSelectedListener, RespondFragment.OnItemSelectedListener{
+public class MainActivity extends AppCompatActivity implements HomeFragment.OnItemSelectedListener, RespondFragment.OnItemSelectedListener {
     BottomNavigationView bottomNavigationView;
     final FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -25,8 +25,7 @@ public class MainActivity extends AppCompatActivity  implements HomeFragment.OnI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-       bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
-
+        bottomNavigationView = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -34,16 +33,9 @@ public class MainActivity extends AppCompatActivity  implements HomeFragment.OnI
 
                 switch (item.getItemId()) {
                     case R.id.action_profile:
-                        //FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                        //ProfileFragment fragmentDemo = ProfileFragment.newInstance(ParseUser.getCurrentUser().getObjectId());
-                        //ft.replace(R.id.flContainer, fragmentDemo);
-                        //ft.addToBackStack(null);
-                        //ft.commit();
-
                         fragment = new ProfileFragment();
                         fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
                         break;
-
                     case R.id.action_home:
                         fragment = new HomeFragment();
                         fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
@@ -55,7 +47,6 @@ public class MainActivity extends AppCompatActivity  implements HomeFragment.OnI
                     case R.id.action_graded:
                         fragment = new GradedFragment();
                         fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
-                        // do something here
                         break;
                     default:
                         throw new IllegalStateException("Unexpected value: " + item.getItemId());
@@ -64,20 +55,21 @@ public class MainActivity extends AppCompatActivity  implements HomeFragment.OnI
             }
         });
 
-        bottomNavigationView.setSelectedItemId(R.id.action_home); //default tab open
+        bottomNavigationView.setSelectedItemId(R.id.action_home); //default tab is home fragment
 
     }
 
+    //interacting with respond fragment
     @Override
     public void onPromptSelected(String prompt) {
-      FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-      RespondFragment fragmentRespond = RespondFragment.newInstance(prompt);
-      ft.replace(R.id.flContainer, fragmentRespond);
-      ft.addToBackStack(null);
-      ft.commit();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        RespondFragment fragmentRespond = RespondFragment.newInstance(prompt);
+        ft.replace(R.id.flContainer, fragmentRespond);
+        ft.addToBackStack(null);
+        ft.commit();
     }
 
-
+    //interacting with home fragment
     @Override
     public void onAnswerSubmitted() {
         HomeFragment fragmentHome = new HomeFragment();

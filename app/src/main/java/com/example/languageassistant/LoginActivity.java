@@ -36,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         btnSignUp = findViewById(R.id.btnSignUp);
 
+        //login
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -46,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
+        //signup
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -56,8 +57,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login(String username, String password){
-        Log.i(TAG, "login: attempting to login in");
-
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             @Override
             public void done(ParseUser user, ParseException e) {
@@ -72,13 +71,14 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-
+    //to main activity
     private void goToMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
     }
 
+    //to create a new account activity
     private void signUp(){
         Intent intent = new Intent(this, NewAccountActivity.class);
         startActivity(intent);

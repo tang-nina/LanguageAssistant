@@ -5,14 +5,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-/*
-Usage:
-  myView.setOnTouchListener(new OnDoubleTapListener(this) {
-    @Override
-    public void onDoubleTap(MotionEvent e) {
-      Toast.makeText(MainActivity.this, "Double Tap", Toast.LENGTH_SHORT).show();
-    }
-  });
+/**
+ * A double tap listener from CodePath's guide.
 */
 public class OnDoubleTapListener implements View.OnTouchListener {
 

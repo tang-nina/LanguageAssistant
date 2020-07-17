@@ -35,11 +35,9 @@ public class Response extends ParseObject {
         put(KEY_ANSWER_RECORDED, new ParseFile(file));
     }
 
-
     public void setResponder(ParseUser user ){
         put(Response.KEY_RESPONDER, user);
     }
-
 
     public void setGrader(ParseUser user ){
         put(Response.KEY_GRADER, user);
@@ -71,8 +69,6 @@ public class Response extends ParseObject {
         put(KEY_ANSWER_WRITTEN, answer);
     }
 
-    //recording?
-
     public boolean getGraded(){
         return getBoolean(KEY_GRADED);
     }
@@ -96,7 +92,6 @@ public class Response extends ParseObject {
     public void setComments(String comments){
         put(KEY_COMMENTS, comments);
     }
-
 
     public static String getRelativeTimeAgo(String rawJsonDate) {
         String twitterFormat = "EEE MMM dd HH:mm:ss zzz yyyy";

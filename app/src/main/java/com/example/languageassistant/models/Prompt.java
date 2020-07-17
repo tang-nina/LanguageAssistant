@@ -13,7 +13,6 @@ public class Prompt extends ParseObject implements Serializable {
     public String getPrompt(){
         return getString(KEY_PROMPT);
     }
-
 }
 
 

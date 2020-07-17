@@ -14,7 +14,7 @@
         android:layout_below="@+id/rlPlay"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="8dp"
-        android:text="Submit"
+        android:text="@string/submit"
         android:visibility="gone" />
 
     <com.google.android.material.card.MaterialCardView
@@ -72,7 +72,7 @@
         android:layout_below="@+id/mcvPromptContainer"
         android:layout_alignParentStart="true"
         android:layout_marginTop="20dp"
-        android:text="Write a response:"
+        android:text="@string/write_response"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
 
     <com.google.android.material.button.MaterialButton
@@ -82,7 +82,7 @@
         android:layout_below="@+id/tilResponse"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="20dp"
-        android:text="Submit" />
+        android:text="@string/submit" />
 
     <RelativeLayout
         android:id="@+id/rlRecording"
@@ -100,7 +100,7 @@
             android:layout_centerVertical="true"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="0dp"
-            android:text="Or record a response:"
+            android:text="@string/record_response"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
 
         <ImageView
@@ -120,7 +120,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
             android:layout_toEndOf="@+id/ivStart"
-            android:text="Press to start recording." />
+            android:text="@string/start_recording" />
 
     </RelativeLayout>
 
@@ -141,7 +141,7 @@
             android:layout_centerVertical="true"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="0dp"
-            android:text="Play recording:"
+            android:text="@string/play_recording"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
 
         <ImageView
@@ -161,7 +161,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="8dp"
             android:layout_toEndOf="@+id/ivPlay"
-            android:text="Press to play." />
+            android:text="@string/press_play" />
 
     </RelativeLayout>
 

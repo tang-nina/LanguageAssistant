@@ -16,10 +16,6 @@ public class Grading extends ParseObject {
 
     public Grading(){}
 
-//    public static Grading getGrading(){
-//
-//    }
-
     public void addGraded(){
         try {
             int total = Integer.parseInt(fetchIfNeeded().getString(KEY_TOTAL_GRADED)) + 1;
@@ -45,7 +41,6 @@ public class Grading extends ParseObject {
         } catch (ParseException e) {
             Log.e(TAG, "Something has gone terribly wrong with Parse", e);
         }
-
     }
 
     public ParseUser getUser(){
