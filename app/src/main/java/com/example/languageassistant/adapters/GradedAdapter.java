@@ -48,7 +48,17 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
         return responses.size();
     }
 
-    public Response getItemAt(int position){ return responses.get(position);}
+    // Clean all elements of the recycler
+    public void clear() {
+        responses.clear();
+        notifyDataSetChanged();
+    }
+
+    // Add a list of items -- change to type used
+    public void addAll(List<Response> list) {
+        responses.addAll(list);
+        notifyDataSetChanged();
+    }
 
     class ViewHolder extends RecyclerView.ViewHolder{
 

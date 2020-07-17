@@ -17,6 +17,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.languageassistant.R;
+import com.example.languageassistant.fragments.GradingFragment;
 import com.example.languageassistant.models.Grading;
 import com.example.languageassistant.models.Response;
 import com.google.android.material.button.MaterialButton;
@@ -32,10 +33,12 @@ import java.util.List;
 public class GradingAdapter extends RecyclerView.Adapter<com.example.languageassistant.adapters.GradingAdapter.ViewHolder> {
     Context context;
     List<Response> responses;
+    GradingFragment gradingFragment;
 
-    public GradingAdapter(Context context, List<Response> responses) {
+    public GradingAdapter(Context context, List<Response> responses, GradingFragment gf) {
         this.context = context;
         this.responses = responses;
+        gradingFragment = gf;
     }
 
     @NonNull
@@ -55,6 +58,20 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
     @Override
     public int getItemCount() {
         return responses.size();
+    }
+
+    /* Within the RecyclerView.Adapter class */
+
+    // Clean all elements of the recycler
+    public void clear() {
+        responses.clear();
+        notifyDataSetChanged();
+    }
+
+    // Add a list of items -- change to type used
+    public void addAll(List<Response> list) {
+        responses.addAll(list);
+        notifyDataSetChanged();
     }
 
 
@@ -89,50 +106,7 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
             tvPlaying = itemView.findViewById(R.id.tvPlaying);
         }
 
-        private void submitFeedback(Response response, float rating, String comment) {
-
-            response.setGrade((int) rating);
-            response.setComments(comment);
-            response.setGraded(true);
-            response.saveInBackground(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-
-                    if (e == null) {
-
-                        Grading grading = (Grading) ParseUser.getCurrentUser().getParseObject("grading");
-
-                        grading.addGraded();
-                        grading.subtractLeftToGrade();
-                        grading.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e == null) {
-                                    Toast.makeText(context, "Your feedback has been saved successfully.", Toast.LENGTH_SHORT).show();
-                                    //clearing in case this affects other responses that get attached to the recycler view?
-                                    rbRating.setRating(0);
-                                    tietComments.getText().clear();
-
-                                    //should clear this entire card from the recycler view right away.
-
-                                } else {
-                                    System.out.println("ISNT WORKING");
-                                }
-                            }
-                        });
-
-
-                    } else {
-                        System.out.println("HEREEEEEEEEEEEE ggrading adapter");
-                    }
-                }
-            });
-
-        }
-
-
         public void bind(final Response response) {
-
             //audio response
             if (response.getRecordedAnswer() != null) {
                 ivPlayAudio.setVisibility(View.VISIBLE);
@@ -192,7 +166,7 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             mediaPlayer.release();
-                                            submitFeedback(response, rating, comment);
+                                            submitFeedback(response, rating, comment, getAdapterPosition());
                                         }
                                     });
                             builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -207,7 +181,7 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
 
                         } else {
                             mediaPlayer.release();
-                            submitFeedback(response, rating, comment);
+                            submitFeedback(response, rating, comment, getAdapterPosition());
                         }
                     }
                 });
@@ -239,7 +213,7 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
                                     new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            submitFeedback(response, rating, comment);
+                                            submitFeedback(response, rating, comment, getAdapterPosition());
                                         }
                                     });
                             builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -253,12 +227,59 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
                             dialog.show();
 
                         } else {
-                            submitFeedback(response, rating, comment);
+                            submitFeedback(response, rating, comment, getAdapterPosition());
                         }
                     }
                 });
 
             }
+        }
+
+        private void submitFeedback(Response response, float rating, String comment, final int position) {
+
+            response.setGrade((int) rating);
+            response.setComments(comment);
+            response.setGraded(true);
+            response.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+
+                    if (e == null) {
+
+                        Grading grading = (Grading) ParseUser.getCurrentUser().getParseObject("grading");
+
+                        grading.addGraded();
+                        grading.subtractLeftToGrade();
+                        grading.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e == null) {
+                                    Toast.makeText(context, "Your feedback has been saved successfully.", Toast.LENGTH_SHORT).show();
+                                    //clearing in case this affects other responses that get attached to the recycler view?
+                                    rbRating.setRating(0);
+                                    tietComments.getText().clear();
+
+                                    //should clear this entire card from the recycler view right away.
+                                    responses.remove(position);
+                                    notifyDataSetChanged();
+                                    gradingFragment.setTvNothingMessage();
+
+                                } else {
+                                    System.out.println("ISNT WORKING");
+                                }
+                            }
+                        });
+
+
+                    } else {
+                        System.out.println("HEREEEEEEEEEEEE ggrading adapter");
+                    }
+                }
+            });
+
+
+
+
         }
 
     }
