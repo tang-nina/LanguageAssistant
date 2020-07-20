@@ -51,4 +51,21 @@ public class Grading extends ParseObject {
         put(KEY_USER, user);
     }
 
+    public int getTotalGraded(){
+        try {
+            return Integer.parseInt(fetchIfNeeded().getString(KEY_TOTAL_GRADED));
+        } catch (ParseException e) {
+            Log.e(TAG, "Something has gone terribly wrong with Parse", e);
+            return 0; //?
+        }
+    }
+
+    public int getLeftToGrade(){
+        try {
+            return Integer.parseInt(fetchIfNeeded().getString(KEY_LEFT_TO_GRADE));
+        } catch (ParseException e) {
+            Log.e(TAG, "Something has gone terribly wrong with Parse", e);
+            return 0; //?
+        }
+    }
 }

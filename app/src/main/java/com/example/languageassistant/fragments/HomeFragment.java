@@ -20,6 +20,7 @@ import com.google.android.material.card.MaterialCardView;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -113,6 +114,7 @@ public class HomeFragment extends Fragment {
                         String today = (new Date()).toString();
                         String formattedToday = today.substring(4, 11) + today.substring(24);
                         queryResponded.whereEqualTo(Response.KEY_DATE, formattedToday);
+                        queryResponded.whereEqualTo(Response.KEY_RESPONDER, ParseUser.getCurrentUser());
                         queryResponded.findInBackground(new FindCallback<Response>() {
                             public void done(List<Response> objects, ParseException e) {
                                 if(e==null){

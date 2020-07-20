@@ -16,11 +16,11 @@
     <item
         android:id="@+id/action_to_grade"
         android:icon="@drawable/outline_pending"
-        android:title="Compose"
+        android:title="Grade"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_graded"
         android:icon="@drawable/outline_graded"
-        android:title="Profile"
+        android:title="Responses"
         app:showAsAction="always" />
 </menu>

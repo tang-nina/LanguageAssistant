@@ -24,16 +24,23 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.example.languageassistant.R;
 import com.example.languageassistant.models.Grading;
+import com.example.languageassistant.models.GradingComparator;
+import com.example.languageassistant.models.GradingScore;
 import com.example.languageassistant.models.Response;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  * A fragment for responding to prompts.
@@ -263,66 +270,109 @@ public class RespondFragment extends Fragment {
     }
 
     //creates new Response with written answer on parse
-    private void makeNewWrittenResponse(String prompt, String answer) {
-        Response newResponse = new Response();
-        newResponse.setResponder(ParseUser.getCurrentUser());
-        newResponse.setWrittenAnswer(answer);
-        newResponse.setPrompt(prompt);
-
-        String today = (new Date()).toString();
-        String formattedToday = today.substring(4, 11) + today.substring(24);
-        newResponse.setDateAnswered(formattedToday);
+    private void makeNewWrittenResponse(final String prompt, final String answer) {
+        final ParseUser curUser = ParseUser.getCurrentUser();
 
         //figure out grading user and put that in - get all grading objects, then see which one is the bext
-        final ParseUser grader = ParseUser.getCurrentUser();//TEMPORARILY
 
-        newResponse.setGrader(grader);
-        newResponse.saveInBackground(new SaveCallback() {
+        //algorthm start
+        ParseQuery<ParseUser> query = ParseQuery.getQuery(ParseUser.class);
+        query.whereEqualTo("nativeLanguage", curUser.getString("targetLanguage"));
+        query.findInBackground(new FindCallback<ParseUser>() {
             @Override
-            public void done(ParseException e) {
-                //update grading user's Grading
-                Grading grading = (Grading) grader.getParseObject(KEY_GRADING);
-                grading.addLeftToGrade();
-                grading.saveInBackground(new SaveCallback() {
+            public void done(List<ParseUser> objects, ParseException e) {
+
+                ArrayList<GradingScore> scores = new ArrayList<GradingScore>();
+                for (int i = 0; i < objects.size(); i++) {
+                    Grading grading = (Grading) objects.get(i).getParseObject("grading");
+                    scores.add(new GradingScore(grading, objects.get(i)));
+                }
+                Collections.sort(scores, new GradingComparator());
+                final ParseUser grader = scores.get(0).getUser(); //should I randomized it among same scores?
+                //algorithm end
+
+                //make new response
+                Response newResponse = new Response();
+                newResponse.setResponder(curUser);
+                newResponse.setWrittenAnswer(answer);
+                newResponse.setPrompt(prompt);
+
+                String today = (new Date()).toString();
+                String formattedToday = today.substring(4, 11) + today.substring(24);
+                newResponse.setDateAnswered(formattedToday);
+                newResponse.setGrader(grader);
+                newResponse.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
-                        Toast.makeText(getContext(), getContext().getString(R.string.response_submitted), Toast.LENGTH_SHORT).show();
-                        listener.onAnswerSubmitted();
+                        //update grading user's Grading
+                        Grading grading = (Grading) grader.getParseObject(KEY_GRADING);
+                        grading.addLeftToGrade();
+                        grading.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                Toast.makeText(getContext(), getContext().getString(R.string.response_submitted), Toast.LENGTH_SHORT).show();
+                                listener.onAnswerSubmitted();
+                            }
+                        });
                     }
                 });
             }
         });
+
     }
 
     //creates new Response with audio answer on parse
-    private void makeNewAudioResponse(String prompt, File recording) {
-        Response newResponse = new Response();
-        newResponse.setResponder(ParseUser.getCurrentUser());
-        newResponse.setRecordedAnswer(recording);
-        newResponse.setPrompt(prompt);
-
-        String today = (new Date()).toString();
-        String formattedToday = today.substring(4, 11) + today.substring(24);
-        newResponse.setDateAnswered(formattedToday);
+    private void makeNewAudioResponse(final String prompt, final File recording) {
+        final ParseUser curUser = ParseUser.getCurrentUser();
 
         //figure out grading user and put that in - get all grading objects, then see which one is the bext
-        final ParseUser grader = ParseUser.getCurrentUser();//TEMPORARILY
 
-        newResponse.setGrader(grader);
-        newResponse.saveInBackground(new SaveCallback() {
+        //algorithm start
+        //prereq: objects will not be 0. Should always be another user who can speak the language.
+        ParseQuery<ParseUser> query = ParseQuery.getQuery(ParseUser.class);
+        query.whereEqualTo("nativeLanguage", curUser.getString("targetLanguage"));
+        query.findInBackground(new FindCallback<ParseUser>() {
             @Override
-            public void done(ParseException e) {
-                //update grading user's Grading
-                Grading grading = (Grading) grader.getParseObject(KEY_GRADING);
-                grading.addLeftToGrade();
-                grading.saveInBackground(new SaveCallback() {
+            public void done(List<ParseUser> objects, ParseException e) {
+
+                ArrayList<GradingScore> scores = new ArrayList<GradingScore>();
+                for(int i= 0; i<objects.size(); i++){
+                    Grading grading = (Grading) objects.get(i).getParseObject("grading");
+                    scores.add(new GradingScore(grading, objects.get(i)));
+                }
+                Collections.sort(scores, new GradingComparator());
+                final ParseUser grader = scores.get(0).getUser();
+                //algorithm end
+
+                //make new response and save
+                Response newResponse = new Response();
+                newResponse.setResponder(curUser);
+                newResponse.setRecordedAnswer(recording);
+                newResponse.setPrompt(prompt);
+
+                String today = (new Date()).toString();
+                String formattedToday = today.substring(4, 11) + today.substring(24);
+                newResponse.setDateAnswered(formattedToday);
+
+                newResponse.setGrader(grader);
+                newResponse.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
-                        Toast.makeText(getContext(), getContext().getString(R.string.response_submitted), Toast.LENGTH_SHORT).show();
-                        listener.onAnswerSubmitted();
+                        //update grading user's Grading
+                        Grading grading = (Grading) grader.getParseObject(KEY_GRADING);
+                        grading.addLeftToGrade();
+                        grading.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                Toast.makeText(getContext(), getContext().getString(R.string.response_submitted), Toast.LENGTH_SHORT).show();
+                                listener.onAnswerSubmitted();
+                            }
+                        });
                     }
                 });
+
             }
         });
     }
+
 }
