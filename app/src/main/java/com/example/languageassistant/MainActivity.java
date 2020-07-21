@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.languageassistant.fragments.EditLangFragment;
 import com.example.languageassistant.fragments.GradedFragment;
 import com.example.languageassistant.fragments.GradingFragment;
 import com.example.languageassistant.fragments.HomeFragment;
@@ -16,7 +17,7 @@ import com.example.languageassistant.fragments.ProfileFragment;
 import com.example.languageassistant.fragments.RespondFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity implements HomeFragment.OnItemSelectedListener, RespondFragment.OnItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements HomeFragment.OnItemSelectedListener, RespondFragment.OnItemSelectedListener, EditLangFragment.OnItemSelectedListener {
     BottomNavigationView bottomNavigationView;
     final FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -74,5 +75,11 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnIt
     public void onAnswerSubmitted() {
         HomeFragment fragmentHome = new HomeFragment();
         fragmentManager.beginTransaction().replace(R.id.flContainer, fragmentHome).commit();
+    }
+
+    @Override
+    public void onUpdateSubmitted() {
+        ProfileFragment fragmentProfile = new ProfileFragment();
+        fragmentManager.beginTransaction().replace(R.id.flContainer, fragmentProfile).commit();
     }
 }

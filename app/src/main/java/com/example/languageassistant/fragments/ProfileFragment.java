@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.bumptech.glide.Glide;
 import com.example.languageassistant.LoginActivity;
@@ -58,6 +59,7 @@ public class ProfileFragment extends Fragment {
     TextView tvTargetLang;
     MaterialButton btnLinkFb;
     TextView tvConvoBuddy;
+    ImageView ivTarget;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -88,6 +90,7 @@ public class ProfileFragment extends Fragment {
         btnLinkFb = view.findViewById(R.id.btnLinkFb);
         tvConvoBuddy = view.findViewById(R.id.tvConvoBuddy);
         btnLogout = view.findViewById(R.id.btnLogout);
+        ivTarget = view.findViewById(R.id.ivTarget);
 
         //log out
         btnLogout.setOnClickListener(new View.OnClickListener() {
@@ -125,6 +128,17 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 launchCamera(); //take a photo
+            }
+        });
+
+        ivTarget.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                EditLangFragment editNameDialogFragment = EditLangFragment.newInstance(user.getString(KEY_TARGET_LANG));
+                editNameDialogFragment.show(fm, "fragment_edit_name");
+
             }
         });
     }

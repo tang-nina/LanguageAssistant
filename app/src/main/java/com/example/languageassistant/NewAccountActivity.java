@@ -46,9 +46,9 @@ public class NewAccountActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                if(etName.getText().length()==0 || etUsername.getText().length()==0 || etPassword.getText().length()==0 ||
-                        etNativeLang.getText().length()==0 || etTargetLang.getText().length()==0){ //should I trim these for whitespace too?
-                    //||etEmail.getText().length()==0
+                if(etName.getText().toString().trim().length() ==0 || etUsername.getText().toString().trim().length()==0 || etPassword.getText().toString().trim().length()==0 ||
+                        etNativeLang.getText().toString().trim().length()==0 || etTargetLang.getText().toString().trim().length()==0){ //should I trim these for whitespace too?
+                    //||etEmail.getText().toString().trim().length()==0
                     //alert user if missing info
                     AlertDialog.Builder builder = new AlertDialog.Builder(NewAccountActivity.this);
                     builder.setCancelable(true);
@@ -105,12 +105,9 @@ public class NewAccountActivity extends AppCompatActivity {
                             }
                         }
                     });
-
                 }
-
             }
         });
-
     }
 
     //to main activity
