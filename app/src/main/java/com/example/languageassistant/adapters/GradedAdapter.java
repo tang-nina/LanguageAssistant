@@ -100,6 +100,7 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
         }
 
         public void bind(final Response response) {
+
             tvNoGrade.setVisibility(View.GONE);
             tvScore.setVisibility(View.GONE);
             tvFeedback.setVisibility(View.GONE);
@@ -107,6 +108,7 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
             mcvContainer.setOnTouchListener(new OnDoubleTapListener(itemView.getContext()) {
                 @Override
                 public void onDoubleTap(MotionEvent e) {
+
 
                     if(flag == false){
                         if(response.getGraded() == false){

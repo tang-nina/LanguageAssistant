@@ -21,6 +21,7 @@
         android:id="@+id/mcvPromptContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:transitionName="prompt"
         android:background="#FFFFFF"
         app:cardCornerRadius="12dp">
 

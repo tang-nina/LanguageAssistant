@@ -74,12 +74,14 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnIt
     @Override
     public void onAnswerSubmitted() {
         HomeFragment fragmentHome = new HomeFragment();
-        fragmentManager.beginTransaction().replace(R.id.flContainer, fragmentHome).commit();
+        fragmentManager.beginTransaction().setCustomAnimations(android.R.anim.fade_in,
+                android.R.anim.fade_out).replace(R.id.flContainer, fragmentHome).commit();
     }
 
     @Override
     public void onUpdateSubmitted() {
         ProfileFragment fragmentProfile = new ProfileFragment();
-        fragmentManager.beginTransaction().replace(R.id.flContainer, fragmentProfile).commit();
+        fragmentManager.beginTransaction().setCustomAnimations(android.R.anim.fade_in,
+                android.R.anim.fade_out).replace(R.id.flContainer, fragmentProfile).commit();
     }
 }

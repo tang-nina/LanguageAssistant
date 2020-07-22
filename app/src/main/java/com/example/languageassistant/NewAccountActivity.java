@@ -13,10 +13,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.languageassistant.models.Grading;
 import com.google.android.material.button.MaterialButton;
+import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
+
+import java.util.List;
 
 public class NewAccountActivity extends AppCompatActivity {
     private static final String TAG = "NewAccountActivity";
@@ -62,49 +66,81 @@ public class NewAccountActivity extends AppCompatActivity {
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 }else{
-                    //if all info is filled out, create new user
 
-                    ParseUser user = new ParseUser();
-                    user.setUsername(etUsername.getText().toString());
-                    user.setPassword(etPassword.getText().toString());
-                    //user.setEmail(etEmail.getText().toString());
-                    user.put("nativeLanguage", etNativeLang.getText().toString());
-                    user.put("targetLanguage", etTargetLang.getText().toString());
-                    user.put("name", etName.getText().toString());
+                    ParseQuery<ParseUser> query = ParseQuery.getQuery(ParseUser.class);
+                    query.whereEqualTo("username", etUsername.getText().toString());
+                    query.findInBackground(new FindCallback<ParseUser>() {
+                        public void done(List<ParseUser> objects, ParseException e) {
+                            if(e==null) {
+                                int size = objects.size();
+                                if(size != 0){
+                                    //somethng is wrong
 
-                    user.signUpInBackground(new SignUpCallback() {
-                        public void done(ParseException e) {
-                            if (e == null) {
-
-                                final Grading grading = new Grading();
-                                grading.setUser(ParseUser.getCurrentUser());
-                                grading.saveInBackground(new SaveCallback() {
-                                    @Override
-                                    public void done(ParseException e) {
-                                        if(e==null){
-                                            ParseUser curUser = ParseUser.getCurrentUser();
-                                            curUser.put("grading", grading);
-                                            curUser.saveInBackground(new SaveCallback() {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(NewAccountActivity.this);
+                                    builder.setCancelable(true);
+                                    builder.setMessage("This username is already in use. Please choose another one.");
+                                    builder.setPositiveButton(NewAccountActivity.this.getString(R.string.ok),
+                                            new DialogInterface.OnClickListener() {
                                                 @Override
-                                                public void done(ParseException e) {
-                                                    if(e==null){
-                                                        goToMainActivity();
-                                                    }
+                                                public void onClick(DialogInterface dialog, int which) {
                                                 }
                                             });
+                                    AlertDialog dialog = builder.create();
+                                    dialog.show();
 
+                                }else{
+
+                                    //if all info is filled out, create new user
+
+                                    ParseUser user = new ParseUser();
+                                    user.setUsername(etUsername.getText().toString());
+                                    user.setPassword(etPassword.getText().toString());
+                                    //user.setEmail(etEmail.getText().toString());
+                                    user.put("nativeLanguage", etNativeLang.getText().toString());
+                                    user.put("targetLanguage", etTargetLang.getText().toString());
+                                    user.put("name", etName.getText().toString());
+
+                                    user.signUpInBackground(new SignUpCallback() {
+                                        public void done(ParseException e) {
+                                            if (e == null) {
+
+                                                final Grading grading = new Grading();
+                                                grading.setUser(ParseUser.getCurrentUser());
+                                                grading.saveInBackground(new SaveCallback() {
+                                                    @Override
+                                                    public void done(ParseException e) {
+                                                        if(e==null){
+                                                            ParseUser curUser = ParseUser.getCurrentUser();
+                                                            curUser.put("grading", grading);
+                                                            curUser.saveInBackground(new SaveCallback() {
+                                                                @Override
+                                                                public void done(ParseException e) {
+                                                                    if(e==null){
+                                                                        goToMainActivity();
+                                                                    }
+                                                                }
+                                                            });
+
+                                                        }
+
+                                                    }
+                                                });
+
+                                            } else {
+                                                Toast.makeText(NewAccountActivity.this, "Login unsuccessful.", Toast.LENGTH_SHORT).show();
+                                                Log.e(TAG, "Issue with login.", e);
+                                                return;
+                                            }
                                         }
+                                    });
 
-                                    }
-                                });
-
-                            } else {
-                                Toast.makeText(NewAccountActivity.this, "Login unsuccessful.", Toast.LENGTH_SHORT).show();
-                                Log.e(TAG, "Issue with login.", e);
-                                return;
+                                }
+                            }else{
+                                Log.e(TAG, "done: ", e);
                             }
                         }
                     });
+
                 }
             }
         });
@@ -114,6 +150,7 @@ public class NewAccountActivity extends AppCompatActivity {
     private void goToMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         finish();
     }
 }

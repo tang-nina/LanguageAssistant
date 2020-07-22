@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -69,6 +70,7 @@ public class GradingFragment extends Fragment {
         llm = new LinearLayoutManager(view.getContext());
         rvGrading.setAdapter(adapter);
         rvGrading.setLayoutManager(llm);
+        rvGrading.setItemAnimator(new DefaultItemAnimator());
 
         // Setup refresh listener
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swipeContainer);

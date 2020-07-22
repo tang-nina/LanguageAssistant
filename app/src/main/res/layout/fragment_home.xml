@@ -20,6 +20,7 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/mcvContainer1"
+            android:transitionName="prompt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -52,6 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:transitionName="prompt"
             android:layout_weight="1"
             app:cardCornerRadius="12dp">
 
@@ -81,6 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_weight="1"
+            android:transitionName="prompt"
             app:cardCornerRadius="12dp">
 
             <RelativeLayout
