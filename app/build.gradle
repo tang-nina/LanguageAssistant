@@ -37,4 +37,10 @@ dependencies {
     // Glide v4 uses this new annotation processor -- see https://bumptech.github.io/glide/doc/generatedapi.html
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+    implementation ('com.facebook.android:facebook-android-sdk:[5,6)') {
+        exclude module: 'bolts-android'
+    }
+    implementation ('com.facebook.android:facebook-login:[5,6)'){
+        exclude module: 'bolts-android'
+    }
 }

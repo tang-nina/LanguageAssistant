@@ -23,6 +23,11 @@ import androidx.fragment.app.FragmentManager;
 import com.bumptech.glide.Glide;
 import com.example.languageassistant.LoginActivity;
 import com.example.languageassistant.R;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.material.button.MaterialButton;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -30,8 +35,10 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.File;
+import java.util.Arrays;
 
 import static android.app.Activity.RESULT_OK;
+
 
 /**
  * A fragment for displaying the profile of a user.
@@ -44,6 +51,9 @@ public class ProfileFragment extends Fragment {
     private static final String KEY_TARGET_LANG = "targetLanguage";
     private static final String KEY_CONVO = "convoBuddy";
     private static final String KEY_PROFILE_PIC = "profilePic";
+
+    private CallbackManager callbackManager;
+
 
     public String photoFileName = "photo.jpg";
     private File photoFile;
@@ -60,6 +70,7 @@ public class ProfileFragment extends Fragment {
     MaterialButton btnLinkFb;
     TextView tvConvoBuddy;
     ImageView ivTarget;
+    LoginButton btnLogin;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -78,6 +89,31 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @NonNull Bundle savedInstanceState){
+        callbackManager = CallbackManager.Factory.create();
+        btnLogin = (LoginButton) view.findViewById(R.id.btnLogin);
+        btnLogin.setReadPermissions(Arrays.asList("user_location"));
+        // If you are using in a fragment, call loginButton.setFragment(this);
+        btnLogin.setFragment(this);
+        btnLogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Toast.makeText(getContext(), "login succesful", Toast.LENGTH_SHORT).show();
+                // App code
+            }
+
+            @Override
+            public void onCancel() {
+                Toast.makeText(getContext(), "login cancel", Toast.LENGTH_SHORT).show();
+                // App code
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                Toast.makeText(getContext(), "login error", Toast.LENGTH_SHORT).show();
+                // App code
+            }
+        });
+
         user = ParseUser.getCurrentUser();
 
         ivProfilePic = view.findViewById(R.id.ivProfilePic);
@@ -87,7 +123,6 @@ public class ProfileFragment extends Fragment {
         tvNativeLang = view.findViewById(R.id.tvNativeLang);
         tvTargetLang = view.findViewById(R.id.tvTargetLang);
         tvNativeLang = view.findViewById(R.id.tvNativeLang);
-        btnLinkFb = view.findViewById(R.id.btnLinkFb);
         tvConvoBuddy = view.findViewById(R.id.tvConvoBuddy);
         btnLogout = view.findViewById(R.id.btnLogout);
         ivTarget = view.findViewById(R.id.ivTarget);
@@ -113,13 +148,6 @@ public class ProfileFragment extends Fragment {
         }else{
             //unfinished
         }
-
-        btnLinkFb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //unfinished
-            }
-        });
 
         //load default pic
         Glide.with(getContext()).load(user.getParseFile(KEY_PROFILE_PIC).getUrl()).fitCenter().circleCrop().into(ivProfilePic);
@@ -181,6 +209,7 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {

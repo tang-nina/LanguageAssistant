@@ -86,15 +86,15 @@
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         tools:text="Target Language: " />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnLinkFb"
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/btnLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvFbInfo"
-        android:layout_alignParentEnd="false"
+        android:layout_alignParentStart="false"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        android:text="@string/link" />
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp" />
 
     <TextView
         android:id="@+id/tvConvoHeader"
@@ -133,6 +133,8 @@
         android:layout_marginStart="12dp"
         android:layout_toEndOf="@+id/tvTargetLang"
         android:src="@drawable/outline_edit_black_18dp" />
+
+
 
 </RelativeLayout>
 
