@@ -89,6 +89,28 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @NonNull Bundle savedInstanceState){
+
+//convo buddy alg
+//        User A makes an account -
+//                Get all users whose native language matches A’s target language, and check if they have partners already.
+//        If there are none - just leave “Coming soon” on the profile screen
+//        If there are some -
+//                If user A has added a FB account: rank the other users by match of target/native lang as well as location, based on a formula.
+//                If no FB account: rank the other users by match of target and native lang
+//        Update convo buddy of both A and the other user
+//
+//        Link FB account when you already have a partner
+//        You recalculate your partner from among those who do not have partners and your prep partner. If the best person is not your prev partner, you go with the new person. Then you rev partner also gets his recalculated among those who do not have partners. “Coming soon” is prob not a possibility bc you would just get re-recommended your prep partner.
+//
+//                Link FB account with no partner
+//        Same procedure as someone who just made an account.
+//
+//                User A changes target language:
+//        Follow “makes new account” procedure for user A and his new language. For the prev partner of user A, do the “makes new account” procedure for his target lang too.
+//
+//
+
+
         callbackManager = CallbackManager.Factory.create();
         btnLogin = (LoginButton) view.findViewById(R.id.btnLogin);
         btnLogin.setReadPermissions(Arrays.asList("user_location"));
