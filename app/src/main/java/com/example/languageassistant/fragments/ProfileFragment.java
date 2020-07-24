@@ -105,16 +105,14 @@ public class ProfileFragment extends Fragment {
             public void onSuccess(LoginResult loginResult) {
 
                 // update location with API call
+                //HOW???
 
                 //update FB partner
-
                 ConvoBuddy convo = (ConvoBuddy) user.getParseObject("convo");
 
-                if(convo.getBuddy() == null){
-                    //                Link FB account with no partner
-//        Same procedure as someone who just made an account.
-
-                }else{
+                if(convo.getBuddy() == null){ //if the user had no previous partner before linking FB account
+                    convoBuddyNoPartner();
+                }else{ //if the user did have a previous partner
 
                     //        Link FB account when you already have a partner
 //        You recalculate your partner from among those who do not have partners and your prep partner.
@@ -167,53 +165,7 @@ public class ProfileFragment extends Fragment {
         tvNativeLang.setText(getContext().getString(R.string.native_lang) + " " + user.getString(KEY_NATIVE_LANG));
         tvTargetLang.setText(getContext().getString(R.string.target_lang) + " " + user.getString(KEY_TARGET_LANG));
 
-        if(user.get(KEY_CONVO) == null){
-            tvConvoBuddy.setText(getContext().getString(R.string.coming_soon));
-        }else{
-            //unfinished
-        }
-
-
-        ConvoBuddy curConvo= (ConvoBuddy) user.getParseObject("convo");
-        //System.out.println(user.getParseObject("convo"));
-
-        //this will run every time the profile section is open, not just when teh account is first created
-        if(curConvo.getBuddy() == null){
-            ParseQuery<ParseUser> query = new ParseQuery<ParseUser>(ParseUser.class);
-            query.whereEqualTo(KEY_NATIVE_LANG, user.getString(KEY_TARGET_LANG)); //speaks correct language
-
-            query.findInBackground(new FindCallback<ParseUser>() {
-                @Override
-                public void done(List<ParseUser> objects, ParseException e) {
-                    //check their convo objects and add users without a partner
-                    ArrayList<ConvoBuddy> noPartner = new ArrayList<>();
-                    for(ParseUser candidate:objects){
-                        ConvoBuddy convo= (ConvoBuddy) candidate.getParseObject("convo");
-                        if(convo.getBuddy() == null){
-                            noPartner.add(convo);
-                        }
-                    }
-
-                    if(noPartner.size()==0){
-                        tvConvoBuddy.setText(getContext().getString(R.string.coming_soon));
-                    }else{
-                        if(user.getString("location").length() == 0){
-                            // If no FB account: rank the other users by match of target and native lang
-
-                        }else{
-                            //If user A has added a FB account: rank the other users by match of target/native lang as well as location, based on a formula.
-
-                        }
-                        // Update convo buddy of both A and the other user
-                    }
-
-                }
-            });
-
-        }else{
-            //nothing, keep your partner
-        }
-
+        convoBuddyNoPartner();
 
 //
 //
@@ -221,7 +173,6 @@ public class ProfileFragment extends Fragment {
 //        Follow “makes new account” procedure for user A and his new language. For the prev partner of user A, do the “makes new account” procedure for his target lang too.
 //
 //
-
 
         //load default pic
         Glide.with(getContext()).load(user.getParseFile(KEY_PROFILE_PIC).getUrl()).fitCenter().circleCrop().into(ivProfilePic);
@@ -243,6 +194,80 @@ public class ProfileFragment extends Fragment {
 
             }
         });
+    }
+
+    //FOR MATCHING CONVO BUDDIES IF USER HAD NO PREVIOUS PARTNER
+    private void convoBuddyNoPartner(){
+        ConvoBuddy curConvo= (ConvoBuddy) user.getParseObject("convo");
+
+        if(curConvo.getBuddy() == null){
+            ParseQuery<ParseUser> query = new ParseQuery<ParseUser>(ParseUser.class);
+            query.addAscendingOrder("createdAt"); //oldest user at top
+            query.whereEqualTo(KEY_NATIVE_LANG, user.getString(KEY_TARGET_LANG)); //speaks correct language
+
+            query.findInBackground(new FindCallback<ParseUser>() {
+                @Override
+                public void done(List<ParseUser> objects, ParseException e) {
+                    //check their convo objects and add users without a partner
+                    ArrayList<ParseUser> noPartner = new ArrayList<>();
+                    for(ParseUser candidate:objects){
+                        ConvoBuddy convo= (ConvoBuddy) candidate.getParseObject("convo");
+                        if(convo.getBuddy() == null){
+                            noPartner.add(candidate);
+                        }
+                    }
+
+                    if(noPartner.size()==0){ //if no available ppl who speak the correct lang + are unpartnered
+                        tvConvoBuddy.setText(getContext().getString(R.string.coming_soon));
+                    }else{ //if people available to be partners
+
+                        if(user.getString("location").length() == 0){ //no FB account attached
+
+                            ParseUser partner = null;
+
+                            //check candidates for people whose language needs match both ways
+                            for(ParseUser candidate : noPartner){
+                                if(candidate.getString(KEY_TARGET_LANG).equals(user.getString(KEY_NATIVE_LANG))) {
+
+                                    //this is the oldest user who matches target-native and native-target
+                                    partner = candidate;
+                                    break;
+                                }
+                            }
+
+                            if(partner == null){ //we could not find a user who matches the lang in two directions
+                                partner = noPartner.get(0); //oldest user who matches target to native lang
+                            }
+
+                            // Update convo buddy of both A and the other user
+                            ConvoBuddy convoPartner= (ConvoBuddy) partner.getParseObject("convo");
+                            convoPartner.putBuddy(user);
+                            convoPartner.saveInBackground();
+
+                            ConvoBuddy convoUser= (ConvoBuddy) user.getParseObject("convo");
+                            convoUser.putBuddy(partner);
+                            final ParseUser finalPartner = partner;
+                            convoUser.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    tvConvoBuddy.setText(finalPartner.getString(KEY_NAME) + " " + finalPartner.getEmail()); //set text
+                                }
+                            });
+
+                        }else{
+                            //If user A has added a FB account: rank the other users by match of target/native lang as well as location, based on a formula.
+                            // Update convo buddy of both A and the other user
+
+                        }
+                    }
+
+                }
+            });
+
+        }else{
+            //nothing, keep your partner
+            tvConvoBuddy.setText(curConvo.getBuddy().getString(KEY_NAME) + " " + curConvo.getBuddy().getEmail());
+        }
     }
 
     public void launchCamera(){
