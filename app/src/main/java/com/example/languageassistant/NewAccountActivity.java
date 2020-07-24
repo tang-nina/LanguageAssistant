@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.languageassistant.models.ConvoBuddy;
 import com.example.languageassistant.models.Grading;
 import com.google.android.material.button.MaterialButton;
 import com.parse.FindCallback;
@@ -110,14 +111,26 @@ public class NewAccountActivity extends AppCompatActivity {
                                                     @Override
                                                     public void done(ParseException e) {
                                                         if(e==null){
-                                                            ParseUser curUser = ParseUser.getCurrentUser();
-                                                            curUser.put("grading", grading);
-                                                            curUser.saveInBackground(new SaveCallback() {
+
+                                                            final ConvoBuddy convo = new ConvoBuddy();
+                                                            convo.putUser(ParseUser.getCurrentUser());
+
+                                                            convo.saveInBackground(new SaveCallback() {
                                                                 @Override
                                                                 public void done(ParseException e) {
-                                                                    if(e==null){
-                                                                        goToMainActivity();
-                                                                    }
+
+                                                                    ParseUser curUser = ParseUser.getCurrentUser();
+                                                                    curUser.put("grading", grading);
+                                                                    curUser.put("convo", convo);
+
+                                                                    curUser.saveInBackground(new SaveCallback() {
+                                                                        @Override
+                                                                        public void done(ParseException e) {
+                                                                            if(e==null){
+                                                                                goToMainActivity();
+                                                                            }
+                                                                        }
+                                                                    });
                                                                 }
                                                             });
 

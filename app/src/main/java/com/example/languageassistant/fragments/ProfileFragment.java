@@ -23,19 +23,24 @@ import androidx.fragment.app.FragmentManager;
 import com.bumptech.glide.Glide;
 import com.example.languageassistant.LoginActivity;
 import com.example.languageassistant.R;
+import com.example.languageassistant.models.ConvoBuddy;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.material.button.MaterialButton;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -89,28 +94,7 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @NonNull Bundle savedInstanceState){
-
-//convo buddy alg
-//        User A makes an account -
-//                Get all users whose native language matches A’s target language, and check if they have partners already.
-//        If there are none - just leave “Coming soon” on the profile screen
-//        If there are some -
-//                If user A has added a FB account: rank the other users by match of target/native lang as well as location, based on a formula.
-//                If no FB account: rank the other users by match of target and native lang
-//        Update convo buddy of both A and the other user
-//
-//        Link FB account when you already have a partner
-//        You recalculate your partner from among those who do not have partners and your prep partner. If the best person is not your prev partner, you go with the new person. Then you rev partner also gets his recalculated among those who do not have partners. “Coming soon” is prob not a possibility bc you would just get re-recommended your prep partner.
-//
-//                Link FB account with no partner
-//        Same procedure as someone who just made an account.
-//
-//                User A changes target language:
-//        Follow “makes new account” procedure for user A and his new language. For the prev partner of user A, do the “makes new account” procedure for his target lang too.
-//
-//
-
-
+        //FB permissions
         callbackManager = CallbackManager.Factory.create();
         btnLogin = (LoginButton) view.findViewById(R.id.btnLogin);
         btnLogin.setReadPermissions(Arrays.asList("user_location"));
@@ -119,13 +103,31 @@ public class ProfileFragment extends Fragment {
         btnLogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Toast.makeText(getContext(), "login succesful", Toast.LENGTH_SHORT).show();
-                // App code
+
+                // update location with API call
+
+                //update FB partner
+
+                ConvoBuddy convo = (ConvoBuddy) user.getParseObject("convo");
+
+                if(convo.getBuddy() == null){
+                    //                Link FB account with no partner
+//        Same procedure as someone who just made an account.
+
+                }else{
+
+                    //        Link FB account when you already have a partner
+//        You recalculate your partner from among those who do not have partners and your prep partner.
+//        If the best person is not your prev partner, you go with the new person.
+//        Then you rev partner also gets his recalculated among those who do not have partners.
+//        “Coming soon” is prob not a possibility bc you would just get re-recommended your prep partner.
+
+                }
             }
 
             @Override
             public void onCancel() {
-                Toast.makeText(getContext(), "login cancel", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "login cancel", Toast.LENGTH_SHORT).show();
                 // App code
             }
 
@@ -170,6 +172,56 @@ public class ProfileFragment extends Fragment {
         }else{
             //unfinished
         }
+
+
+        ConvoBuddy curConvo= (ConvoBuddy) user.getParseObject("convo");
+        //System.out.println(user.getParseObject("convo"));
+
+        //this will run every time the profile section is open, not just when teh account is first created
+        if(curConvo.getBuddy() == null){
+            ParseQuery<ParseUser> query = new ParseQuery<ParseUser>(ParseUser.class);
+            query.whereEqualTo(KEY_NATIVE_LANG, user.getString(KEY_TARGET_LANG)); //speaks correct language
+
+            query.findInBackground(new FindCallback<ParseUser>() {
+                @Override
+                public void done(List<ParseUser> objects, ParseException e) {
+                    //check their convo objects and add users without a partner
+                    ArrayList<ConvoBuddy> noPartner = new ArrayList<>();
+                    for(ParseUser candidate:objects){
+                        ConvoBuddy convo= (ConvoBuddy) candidate.getParseObject("convo");
+                        if(convo.getBuddy() == null){
+                            noPartner.add(convo);
+                        }
+                    }
+
+                    if(noPartner.size()==0){
+                        tvConvoBuddy.setText(getContext().getString(R.string.coming_soon));
+                    }else{
+                        if(user.getString("location").length() == 0){
+                            // If no FB account: rank the other users by match of target and native lang
+
+                        }else{
+                            //If user A has added a FB account: rank the other users by match of target/native lang as well as location, based on a formula.
+
+                        }
+                        // Update convo buddy of both A and the other user
+                    }
+
+                }
+            });
+
+        }else{
+            //nothing, keep your partner
+        }
+
+
+//
+//
+//                User A changes target language:
+//        Follow “makes new account” procedure for user A and his new language. For the prev partner of user A, do the “makes new account” procedure for his target lang too.
+//
+//
+
 
         //load default pic
         Glide.with(getContext()).load(user.getParseFile(KEY_PROFILE_PIC).getUrl()).fitCenter().circleCrop().into(ivProfilePic);
@@ -231,7 +283,9 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        if(requestCode != CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE){
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
