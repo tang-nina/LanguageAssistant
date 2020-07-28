@@ -3,6 +3,7 @@ package com.example.languageassistant;
 import android.app.Application;
 
 import com.example.languageassistant.models.ConvoBuddy;
+import com.example.languageassistant.models.Email;
 import com.example.languageassistant.models.Grading;
 import com.example.languageassistant.models.Prompt;
 import com.example.languageassistant.models.Response;
@@ -27,7 +28,7 @@ public class ParseApplication extends Application {
         ParseObject.registerSubclass(Response.class);
         ParseObject.registerSubclass(Grading.class);
         ParseObject.registerSubclass(ConvoBuddy.class);
-
+        ParseObject.registerSubclass(Email.class);
 
         // set applicationId, and server server based on the values in the Heroku settings.
         // clientKey is not needed unless explicitly configured

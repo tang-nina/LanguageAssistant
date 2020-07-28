@@ -26,6 +26,7 @@ import com.example.languageassistant.R;
 import com.example.languageassistant.models.ConvoBuddy;
 import com.example.languageassistant.models.ConvoPartnerScore;
 import com.example.languageassistant.models.ConvoPartnerScoreComparator;
+import com.example.languageassistant.models.Email;
 import com.google.android.material.button.MaterialButton;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -184,7 +185,10 @@ public class ProfileFragment extends Fragment {
             } else {
                 //keep your partner
                 try {
-                    tvConvoBuddy.setText(curConvo.getBuddy().fetchIfNeeded().getString(KEY_NAME) + " " + curConvo.getBuddy().getEmail());
+
+                    Email email = (Email) curConvo.getBuddy().fetchIfNeeded().getParseObject("emailObject"); //email of partner
+
+                    tvConvoBuddy.setText(curConvo.getBuddy().fetchIfNeeded().getString(KEY_NAME) + " (" + email.getEmail() +")");
                     //tvConvoBuddy.setText(curConvo.getBuddy().getString(KEY_NAME) + " " + curConvo.getBuddy().getEmail());
 
                 } catch (ParseException e1) {
@@ -379,7 +383,8 @@ public class ProfileFragment extends Fragment {
                             @Override
                             public void done(ParseException e) {
                                 if (e == null && flag) {
-                                    tvConvoBuddy.setText(finalPartner.getString(KEY_NAME) + " " + finalPartner.getEmail()); //set text
+                                    Email email = (Email) finalPartner.getParseObject("emailObject"); //email of partner
+                                    tvConvoBuddy.setText(finalPartner.getString(KEY_NAME) + " (" + email.getEmail() +")"); //set text
                                 }
                             }
                         });
@@ -387,10 +392,6 @@ public class ProfileFragment extends Fragment {
                 }
             });
     }
-
-
-
-
 
     public void launchCamera(){
         // create Intent to take a picture and return control to the calling application

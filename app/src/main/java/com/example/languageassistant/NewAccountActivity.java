@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.languageassistant.models.ConvoBuddy;
+import com.example.languageassistant.models.Email;
 import com.example.languageassistant.models.Grading;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -123,13 +124,17 @@ public class NewAccountActivity extends AppCompatActivity {
                                     user.put("targetLanguage", etTargetLang.getText().toString());
                                     user.put("name", etName.getText().toString());
 
-                                    user.put("location", location);
-                                    user.put("birthday", birthday);
+                                    if (AccessToken.getCurrentAccessToken() != null) { //only update if the user stays logged in
+                                        user.put("location", location);
+                                        user.put("birthday", birthday);
+                                    }else{
+                                        user.put("location", "");
+                                        user.put("birthday", "");
+                                    }
 
                                     user.signUpInBackground(new SignUpCallback() {
                                         public void done(ParseException e) {
                                             if (e == null) {
-
                                                 final Grading grading = new Grading();
                                                 grading.setUser(ParseUser.getCurrentUser());
                                                 grading.saveInBackground(new SaveCallback() {
@@ -143,24 +148,38 @@ public class NewAccountActivity extends AppCompatActivity {
                                                                 @Override
                                                                 public void done(ParseException e) {
 
-                                                                    ParseUser curUser = ParseUser.getCurrentUser();
-                                                                    curUser.put("grading", grading);
-                                                                    curUser.put("convo", convo);
+                                                                    final Email email = new Email();
+                                                                    email.putUser(ParseUser.getCurrentUser());
+                                                                    email.putEmail(etEmail.getText().toString());
 
-                                                                    curUser.saveInBackground(new SaveCallback() {
+                                                                    email.saveInBackground(new SaveCallback() {
                                                                         @Override
                                                                         public void done(ParseException e) {
-                                                                            if (e == null) {
 
-                                                                                AccessToken.setCurrentAccessToken(null);
-                                                                                if (LoginManager.getInstance() != null) {
-                                                                                    LoginManager.getInstance().logOut();
+                                                                            ParseUser curUser = ParseUser.getCurrentUser();
+                                                                            curUser.put("grading", grading);
+                                                                            curUser.put("convo", convo);
+                                                                            curUser.put("emailObject", email);
+
+                                                                            curUser.saveInBackground(new SaveCallback() {
+                                                                                @Override
+                                                                                public void done(ParseException e) {
+                                                                                    if (e == null) {
+
+                                                                                        AccessToken.setCurrentAccessToken(null);
+                                                                                        if (LoginManager.getInstance() != null) {
+                                                                                            LoginManager.getInstance().logOut();
+                                                                                        }
+
+                                                                                        goToMainActivity();
+                                                                                    }
                                                                                 }
+                                                                            });
 
-                                                                                goToMainActivity();
-                                                                            }
                                                                         }
                                                                     });
+
+
                                                                 }
                                                             });
                                                         }

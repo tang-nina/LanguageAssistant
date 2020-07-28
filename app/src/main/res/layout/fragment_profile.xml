@@ -120,9 +120,9 @@
         android:id="@+id/tvBday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvTargetLang"
+        android:layout_below="@+id/tvFbInfo"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="8dp"
         android:text="Birthday:"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
 
@@ -143,6 +143,16 @@
         android:layout_marginStart="12dp"
         android:layout_toEndOf="@id/tvLoc"
         android:src="@drawable/outline_edit_black_18dp" />
+
+    <TextView
+        android:id="@+id/tvFbInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvTargetLang"
+        android:layout_marginTop="20dp"
+        android:text="Info from Facebook"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textSize="18sp" />
 
 
 </RelativeLayout>
