@@ -39,9 +39,6 @@ import java.util.List;
 
 public class NewAccountActivity extends AppCompatActivity {
     private static final String TAG = "NewAccountActivity";
-    private static final String DEFAULT_ID = "JSYDmAKach";
-
-    private CallbackManager callbackManager;
 
     EditText etName;
     EditText etUsername;
@@ -51,7 +48,9 @@ public class NewAccountActivity extends AppCompatActivity {
     EditText etTargetLang;
     MaterialButton btnSubmit;
 
-    LoginButton btnLogin; //FB login button
+    //FB login + SDK
+    private CallbackManager callbackManager;
+    LoginButton btnLogin;
     String location = "";
     String birthday = "";
 
@@ -59,7 +58,6 @@ public class NewAccountActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_account);
-
 
         etName = findViewById(R.id.etName);
         etUsername = findViewById(R.id.etUsername);
@@ -69,14 +67,13 @@ public class NewAccountActivity extends AppCompatActivity {
         etTargetLang = findViewById(R.id.etTarget);
 
         btnSubmit = findViewById(R.id.btnSubmit);
-
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 if(etName.getText().toString().trim().length() ==0 || etUsername.getText().toString().trim().length()==0 || etPassword.getText().toString().trim().length()==0 ||
-                        etNativeLang.getText().toString().trim().length()==0 || etTargetLang.getText().toString().trim().length()==0){ //should I trim these for whitespace too?
-                    //||etEmail.getText().toString().trim().length()==0
+                        etNativeLang.getText().toString().trim().length()==0 || etTargetLang.getText().toString().trim().length()==0 ||etEmail.getText().toString().trim().length()==0){ //should I trim these for whitespace too?
+
                     //alert user if missing info
                     AlertDialog.Builder builder = new AlertDialog.Builder(NewAccountActivity.this);
                     builder.setCancelable(true);
@@ -90,7 +87,6 @@ public class NewAccountActivity extends AppCompatActivity {
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 }else{
-
                     ParseQuery<ParseUser> query = ParseQuery.getQuery(ParseUser.class);
                     query.whereEqualTo("username", etUsername.getText().toString());
                     query.findInBackground(new FindCallback<ParseUser>() {
@@ -98,8 +94,7 @@ public class NewAccountActivity extends AppCompatActivity {
                             if(e==null) {
                                 int size = objects.size();
                                 if(size != 0){
-                                    //somethng is wrong
-
+                                    //username already in use alert
                                     AlertDialog.Builder builder = new AlertDialog.Builder(NewAccountActivity.this);
                                     builder.setCancelable(true);
                                     builder.setMessage("This username is already in use. Please choose another one.");
@@ -111,9 +106,7 @@ public class NewAccountActivity extends AppCompatActivity {
                                             });
                                     AlertDialog dialog = builder.create();
                                     dialog.show();
-
                                 }else{
-
                                     //if all info is filled out, create new user
 
                                     ParseUser user = new ParseUser();
@@ -124,7 +117,8 @@ public class NewAccountActivity extends AppCompatActivity {
                                     user.put("targetLanguage", etTargetLang.getText().toString());
                                     user.put("name", etName.getText().toString());
 
-                                    if (AccessToken.getCurrentAccessToken() != null) { //only update if the user stays logged in
+                                    if (AccessToken.getCurrentAccessToken() != null) {
+                                        //only update if the user stays logged in to FB account
                                         user.put("location", location);
                                         user.put("birthday", birthday);
                                     }else{
@@ -175,11 +169,8 @@ public class NewAccountActivity extends AppCompatActivity {
                                                                                     }
                                                                                 }
                                                                             });
-
                                                                         }
                                                                     });
-
-
                                                                 }
                                                             });
                                                         }
@@ -193,14 +184,12 @@ public class NewAccountActivity extends AppCompatActivity {
                                             }
                                         }
                                     });
-
                                 }
                             }else{
                                 Log.e(TAG, "done: ", e);
                             }
                         }
                     });
-
                 }
             }
         });
@@ -212,9 +201,7 @@ public class NewAccountActivity extends AppCompatActivity {
         btnLogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-
                 AccessToken accessToken = loginResult.getAccessToken();
-
                 GraphRequest request = GraphRequest.newMeRequest(
                         accessToken,
                         new GraphRequest.GraphJSONObjectCallback() {
@@ -224,14 +211,13 @@ public class NewAccountActivity extends AppCompatActivity {
                                 try {
                                   location = object.getJSONObject("location").getString("name");
                                 }catch(JSONException e){
-                                    //make toast telling them they don't have a location so we can't use the info?
+                                    location = ""; //its ok if they don't have the info on the FB account
                                 }
 
                                 try{
                                     birthday = object.getString("birthday");
-                                    //System.out.println(birthday + "     " + birthday.length());
                                 }catch(JSONException e){
-                                    //make toast telling them they don't have a birthday so we can't use the info?
+                                    birthday = "";  //its ok if they don't have the info on the FB account
                                 }
                             }
                         });
@@ -243,16 +229,10 @@ public class NewAccountActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancel() {
-                //Toast.makeText(getContext(), "login cancel", Toast.LENGTH_SHORT).show();
-                // App code
-            }
+            public void onCancel() { }
 
             @Override
-            public void onError(FacebookException exception) {
-                //Toast.makeText(getContext(), "login error", Toast.LENGTH_SHORT).show();
-                // App code
-            }
+            public void onError(FacebookException exception) { }
         });
     }
 
@@ -264,10 +244,10 @@ public class NewAccountActivity extends AppCompatActivity {
         finish();
     }
 
+    //returning from FB login
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
-
     }
 }

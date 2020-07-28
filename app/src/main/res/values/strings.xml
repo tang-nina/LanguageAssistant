@@ -47,6 +47,4 @@
     <string name="feedback">Please give your feedback on this response.</string>
     <string name="any_add_comments">Any additional comments?</string>
     <string name="not_graded">Not graded yet.</string>
-    <string name="facebook_app_id">291329435621536</string>
-    <string name="fb_login_protocol_scheme">fb291329435621536</string>
 </resources>
