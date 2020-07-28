@@ -86,21 +86,12 @@
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         tools:text="Target Language: " />
 
-    <com.facebook.login.widget.LoginButton
-        android:id="@+id/btnLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvFbInfo"
-        android:layout_alignParentStart="false"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp" />
 
     <TextView
         android:id="@+id/tvConvoHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvTargetLang"
+        android:layout_below="@+id/tvLoc"
         android:layout_marginTop="20dp"
         android:text="@string/rec_buddy"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
@@ -115,15 +106,6 @@
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         tools:text="some name and email here." />
 
-    <TextView
-        android:id="@+id/tvFbInfo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvConvoBuddy"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:text="@string/fb_instruc"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
 
     <ImageView
         android:id="@+id/ivTarget"
@@ -134,6 +116,33 @@
         android:layout_toEndOf="@+id/tvTargetLang"
         android:src="@drawable/outline_edit_black_18dp" />
 
+    <TextView
+        android:id="@+id/tvBday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvTargetLang"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp"
+        android:text="Birthday:"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
+
+    <TextView
+        android:id="@+id/tvLoc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvBday"
+        android:layout_marginTop="4dp"
+        android:text="Current Location: "
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
+
+    <ImageView
+        android:id="@+id/ivLoc"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignTop="@id/tvLoc"
+        android:layout_marginStart="12dp"
+        android:layout_toEndOf="@id/tvLoc"
+        android:src="@drawable/outline_edit_black_18dp" />
 
 
 </RelativeLayout>

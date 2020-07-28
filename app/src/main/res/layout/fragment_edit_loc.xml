@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    tools:context=".fragments.EditLocFragment">
+
+    <RelativeLayout
+        android:id="@+id/edit_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:id="@+id/tvInstruc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Please update your location."
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
+
+        <RelativeLayout
+            android:id="@+id/rlCity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvInstruc"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:id="@+id/tvCityLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="Enter your city here: " />
+
+            <EditText
+                android:id="@+id/etCity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="4dp"
+                android:layout_toEndOf="@+id/tvCityLabel"
+                android:ems="10"
+                android:inputType="textPersonName|textCapWords"
+                android:textSize="14sp" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/rlRegion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rlCity"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:id="@+id/tvRegionLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="Enter your region here: " />
+
+            <EditText
+                android:id="@+id/etRegion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="4dp"
+                android:layout_toEndOf="@+id/tvRegionLabel"
+                android:ems="10"
+                android:inputType="textPersonName|textCapWords"
+                android:textSize="14sp" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tvRegionInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rlRegion"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="4dp"
+            android:text="You can choose your region to be a state/province or a country."
+            android:textSize="12sp" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvRegionInfo"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="12dp"
+            android:layout_toStartOf="@+id/btnSave"
+            android:text="Cancel" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvRegionInfo"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="0dp"
+            android:text="Save" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

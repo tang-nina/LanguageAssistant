@@ -17,6 +17,14 @@ public class ConvoBuddy extends ParseObject {
         put("convoBuddy", user);
     }
 
+    public void removeBuddy() {
+        try {
+            fetchIfNeeded().remove("convoBuddy");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
     public ParseUser getBuddy(){
         try {
             return fetchIfNeeded().getParseUser("convoBuddy");

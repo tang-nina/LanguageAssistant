@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.languageassistant.fragments.EditLangFragment;
+import com.example.languageassistant.fragments.EditLocFragment;
 import com.example.languageassistant.fragments.GradedFragment;
 import com.example.languageassistant.fragments.GradingFragment;
 import com.example.languageassistant.fragments.HomeFragment;
@@ -17,7 +18,7 @@ import com.example.languageassistant.fragments.ProfileFragment;
 import com.example.languageassistant.fragments.RespondFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity implements HomeFragment.OnItemSelectedListener, RespondFragment.OnItemSelectedListener, EditLangFragment.OnItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements HomeFragment.OnItemSelectedListener, RespondFragment.OnItemSelectedListener, EditLangFragment.OnItemSelectedListener, EditLocFragment.OnItemSelectedListener {
     BottomNavigationView bottomNavigationView;
     final FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnIt
 
                 switch (item.getItemId()) {
                     case R.id.action_profile:
-                        fragment = new ProfileFragment();
+                        fragment = new ProfileFragment(); //make sure the flag is going in as false
                         fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
                         break;
                     case R.id.action_home:
@@ -80,8 +81,26 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnIt
 
     @Override
     public void onUpdateSubmitted() {
-        ProfileFragment fragmentProfile = new ProfileFragment();
-        fragmentManager.beginTransaction().setCustomAnimations(android.R.anim.fade_in,
-                android.R.anim.fade_out).replace(R.id.flContainer, fragmentProfile).commit();
+
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ProfileFragment fragmentProfile = ProfileFragment.newInstance(true);
+        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        ft.replace(R.id.flContainer, fragmentProfile);
+        ft.commit();
+
+//
+//        ProfileFragment fragmentProfile = new ProfileFragment();
+//        fragmentManager.beginTransaction().setCustomAnimations(android.R.anim.fade_in,
+//                android.R.anim.fade_out).replace(R.id.flContainer, fragmentProfile).commit();
+    }
+
+    @Override
+    public void onLocationUpdate() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ProfileFragment fragmentProfile = ProfileFragment.newInstance(true);
+        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+        ft.replace(R.id.flContainer, fragmentProfile);
+        ft.commit();
     }
 }

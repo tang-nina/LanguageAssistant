@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/rlPassword"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="12dp">
 
         <TextView
             android:id="@+id/tvEmailLabel"
@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/rlUsername"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="12dp">
 
         <TextView
             android:id="@+id/tvPasswordLabel"
@@ -76,7 +76,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/rlName"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="12dp">
 
         <TextView
             android:id="@+id/tvUsernameLabel"
@@ -103,7 +103,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvTitle"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="12dp">
 
         <TextView
             android:id="@+id/tvNameLabel"
@@ -131,7 +131,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/rlEmail"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp">
+        android:layout_marginTop="20dp">
 
         <TextView
             android:id="@+id/tvNativeLabel"
@@ -188,14 +188,36 @@
 
     </RelativeLayout>
 
+    <TextView
+        android:id="@+id/tvFbInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rlTarget"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="@string/fb_instruc"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/btnLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvFbInfo"
+        android:layout_alignParentStart="false"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="8dp" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSubmit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/rlTarget"
+        android:layout_below="@+id/btnLogin"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="0dp"
         android:text="Submit" />
+
 
 </RelativeLayout>

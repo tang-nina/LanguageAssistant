@@ -40,11 +40,13 @@
     <string name="logout">Log out </string>
     <string name="rec_buddy">Recommended Conversation Buddy</string>
     <string name="link">Link</string>
-    <string name="fb_instruc">Link your Facebook account for a better recommendation. </string>
+    <string name="fb_instruc">Link your Facebook account for a better conversation buddy \nrecommendation. We will use your location and birthday.</string>
     <string name="submit">Submit</string>
     <string name="write_response">Write a response:</string>
     <string name="record_response">Or record a response:</string>
     <string name="feedback">Please give your feedback on this response.</string>
     <string name="any_add_comments">Any additional comments?</string>
     <string name="not_graded">Not graded yet.</string>
+    <string name="facebook_app_id">291329435621536</string>
+    <string name="fb_login_protocol_scheme">fb291329435621536</string>
 </resources>

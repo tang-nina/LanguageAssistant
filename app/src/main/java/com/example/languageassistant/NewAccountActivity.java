@@ -13,6 +13,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.languageassistant.models.ConvoBuddy;
 import com.example.languageassistant.models.Grading;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.material.button.MaterialButton;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -21,10 +30,18 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Arrays;
 import java.util.List;
 
 public class NewAccountActivity extends AppCompatActivity {
     private static final String TAG = "NewAccountActivity";
+    private static final String DEFAULT_ID = "JSYDmAKach";
+
+    private CallbackManager callbackManager;
+
     EditText etName;
     EditText etUsername;
     EditText etPassword;
@@ -33,10 +50,15 @@ public class NewAccountActivity extends AppCompatActivity {
     EditText etTargetLang;
     MaterialButton btnSubmit;
 
+    LoginButton btnLogin; //FB login button
+    String location = "";
+    String birthday = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_account);
+
 
         etName = findViewById(R.id.etName);
         etUsername = findViewById(R.id.etUsername);
@@ -96,10 +118,13 @@ public class NewAccountActivity extends AppCompatActivity {
                                     ParseUser user = new ParseUser();
                                     user.setUsername(etUsername.getText().toString());
                                     user.setPassword(etPassword.getText().toString());
-                                    //user.setEmail(etEmail.getText().toString());
+                                    user.setEmail(etEmail.getText().toString());
                                     user.put("nativeLanguage", etNativeLang.getText().toString());
                                     user.put("targetLanguage", etTargetLang.getText().toString());
                                     user.put("name", etName.getText().toString());
+
+                                    user.put("location", location);
+                                    user.put("birthday", birthday);
 
                                     user.signUpInBackground(new SignUpCallback() {
                                         public void done(ParseException e) {
@@ -110,8 +135,7 @@ public class NewAccountActivity extends AppCompatActivity {
                                                 grading.saveInBackground(new SaveCallback() {
                                                     @Override
                                                     public void done(ParseException e) {
-                                                        if(e==null){
-
+                                                        if (e == null) {
                                                             final ConvoBuddy convo = new ConvoBuddy();
                                                             convo.putUser(ParseUser.getCurrentUser());
 
@@ -126,16 +150,20 @@ public class NewAccountActivity extends AppCompatActivity {
                                                                     curUser.saveInBackground(new SaveCallback() {
                                                                         @Override
                                                                         public void done(ParseException e) {
-                                                                            if(e==null){
+                                                                            if (e == null) {
+
+                                                                                AccessToken.setCurrentAccessToken(null);
+                                                                                if (LoginManager.getInstance() != null) {
+                                                                                    LoginManager.getInstance().logOut();
+                                                                                }
+
                                                                                 goToMainActivity();
                                                                             }
                                                                         }
                                                                     });
                                                                 }
                                                             });
-
                                                         }
-
                                                     }
                                                 });
 
@@ -157,6 +185,56 @@ public class NewAccountActivity extends AppCompatActivity {
                 }
             }
         });
+
+        //FB permissions
+        callbackManager = CallbackManager.Factory.create();
+        btnLogin = (LoginButton) findViewById(R.id.btnLogin);
+        btnLogin.setReadPermissions(Arrays.asList("user_location", "user_birthday"));
+        btnLogin.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+
+                AccessToken accessToken = loginResult.getAccessToken();
+
+                GraphRequest request = GraphRequest.newMeRequest(
+                        accessToken,
+                        new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(JSONObject object, GraphResponse response) {
+                                //try to get location and birthday info
+                                try {
+                                  location = object.getJSONObject("location").getString("name");
+                                }catch(JSONException e){
+                                    //make toast telling them they don't have a location so we can't use the info?
+                                }
+
+                                try{
+                                    birthday = object.getString("birthday");
+                                    //System.out.println(birthday + "     " + birthday.length());
+                                }catch(JSONException e){
+                                    //make toast telling them they don't have a birthday so we can't use the info?
+                                }
+                            }
+                        });
+
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,location,link,birthday");
+                request.setParameters(parameters);
+                request.executeAsync();
+            }
+
+            @Override
+            public void onCancel() {
+                //Toast.makeText(getContext(), "login cancel", Toast.LENGTH_SHORT).show();
+                // App code
+            }
+
+            @Override
+            public void onError(FacebookException exception) {
+                //Toast.makeText(getContext(), "login error", Toast.LENGTH_SHORT).show();
+                // App code
+            }
+        });
     }
 
     //to main activity
@@ -165,5 +243,12 @@ public class NewAccountActivity extends AppCompatActivity {
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         finish();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
 }
