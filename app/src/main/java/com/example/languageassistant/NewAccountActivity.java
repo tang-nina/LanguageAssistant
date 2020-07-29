@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.languageassistant.models.ConvoBuddy;
 import com.example.languageassistant.models.Email;
 import com.example.languageassistant.models.Grading;
+import com.example.languageassistant.models.Response;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -160,12 +161,89 @@ public class NewAccountActivity extends AppCompatActivity {
                                                                                 public void done(ParseException e) {
                                                                                     if (e == null) {
 
-                                                                                        AccessToken.setCurrentAccessToken(null);
-                                                                                        if (LoginManager.getInstance() != null) {
-                                                                                            LoginManager.getInstance().logOut();
-                                                                                        }
+                                                                                        ParseQuery<ParseUser> query = new ParseQuery<ParseUser>(ParseUser.class);
+                                                                                        query.whereEqualTo("objectId", "JSYDmAKach");
+                                                                                        query.findInBackground(new FindCallback<ParseUser>() {
+                                                                                            @Override
+                                                                                            public void done(List<ParseUser> objects, ParseException e) {
 
-                                                                                        goToMainActivity();
+                                                                                                ParseQuery<Response> queryResponse = ParseQuery.getQuery(Response.class);
+                                                                                                queryResponse.whereEqualTo("gradingUser", objects.get(0));
+                                                                                                queryResponse.findInBackground(new FindCallback<Response>() {
+                                                                                                    @Override
+                                                                                                    public void done(final List<Response> objects, ParseException e) {
+                                                                                                        if(objects.size()!= 0){
+
+                                                                                                            ParseQuery<ParseUser> queryUser = ParseQuery.getQuery(ParseUser.class);
+                                                                                                            queryUser.whereEqualTo("targetLanguage", etNativeLang.getText().toString());
+                                                                                                            queryUser.findInBackground(new FindCallback<ParseUser>() {
+                                                                                                                @Override
+                                                                                                                public void done(List<ParseUser> users, ParseException e) {
+
+                                                                                                                    if(users.size()!=0){
+
+                                                                                                                        //will this loop take too long???
+                                                                                                                        for(ParseUser u:users){
+                                                                                                                            for(Response r: objects){
+
+                                                                                                                                String id = "";
+                                                                                                                                try{
+                                                                                                                                    id= r.getResponder().fetchIfNeeded().getObjectId();
+                                                                                                                                } catch (ParseException ex) {
+                                                                                                                                    ex.printStackTrace();
+                                                                                                                                }
+
+                                                                                                                                if(id.equals(u.getObjectId())){
+
+                                                                                                                                    r.setGrader(ParseUser.getCurrentUser());
+
+                                                                                                                                    r.saveInBackground(new SaveCallback() {
+                                                                                                                                        @Override
+                                                                                                                                        public void done(ParseException e) {
+                                                                                                                                            //update grading user's Grading
+                                                                                                                                            grading.addLeftToGrade();
+                                                                                                                                            grading.saveInBackground();
+                                                                                                                                        }
+                                                                                                                                    });
+
+                                                                                                                                }
+                                                                                                                            }
+                                                                                                                        }
+
+                                                                                                                        AccessToken.setCurrentAccessToken(null);
+                                                                                                                        if (LoginManager.getInstance() != null) {
+                                                                                                                            LoginManager.getInstance().logOut();
+                                                                                                                        }
+
+                                                                                                                        goToMainActivity();
+
+                                                                                                                    }else{
+                                                                                                                        AccessToken.setCurrentAccessToken(null);
+                                                                                                                        if (LoginManager.getInstance() != null) {
+                                                                                                                            LoginManager.getInstance().logOut();
+                                                                                                                        }
+
+                                                                                                                        goToMainActivity();
+                                                                                                                    }
+
+                                                                                                                }
+                                                                                                            });
+
+                                                                                                        }else{
+                                                                                                            AccessToken.setCurrentAccessToken(null);
+                                                                                                            if (LoginManager.getInstance() != null) {
+                                                                                                                LoginManager.getInstance().logOut();
+                                                                                                            }
+
+                                                                                                            goToMainActivity();
+                                                                                                        }
+                                                                                                    }
+                                                                                                });
+
+
+                                                                                            }
+                                                                                        });
+
                                                                                     }
                                                                                 }
                                                                             });

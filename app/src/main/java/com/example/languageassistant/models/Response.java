@@ -39,6 +39,10 @@ public class Response extends ParseObject {
         put(Response.KEY_RESPONDER, user);
     }
 
+    public ParseUser getResponder(){
+        return getParseUser(Response.KEY_RESPONDER);
+    }
+
     public void setGrader(ParseUser user ){
         put(Response.KEY_GRADER, user);
     }
@@ -108,4 +112,6 @@ public class Response extends ParseObject {
         }
         return relativeDate;
     }
+
+
 }

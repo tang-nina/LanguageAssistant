@@ -287,35 +287,72 @@ public class RespondFragment extends Fragment {
                     Grading grading = (Grading) objects.get(i).getParseObject("grading");
                     scores.add(new GradingScore(grading, objects.get(i)));
                 }
-                Collections.sort(scores, new GradingComparator());
-                final ParseUser grader = scores.get(0).getUser(); //should I randomized it among same scores?
+
+                if(objects.size() == 0){
+                    //grader is DEFAULT object
+
+                    ParseQuery<ParseUser> query = new ParseQuery<ParseUser>(ParseUser.class);
+                    query.whereEqualTo("objectId", "JSYDmAKach");
+                    query.findInBackground(new FindCallback<ParseUser>() {
+                        @Override
+                        public void done(List<ParseUser> objects, ParseException e) {
+                            //make new response
+                            Response newResponse = new Response();
+                            newResponse.setResponder(curUser);
+                            newResponse.setWrittenAnswer(answer);
+                            newResponse.setPrompt(prompt);
+
+                            String today = (new Date()).toString();
+                            String formattedToday = today.substring(4, 11) + today.substring(24);
+                            newResponse.setDateAnswered(formattedToday);
+                            newResponse.setGrader(objects.get(0));
+
+                            newResponse.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    //did not update DEFAULT's grading object ... maybe I should?
+                                 Toast.makeText(getContext(), getContext().getString(R.string.response_submitted), Toast.LENGTH_SHORT).show();
+                                 listener.onAnswerSubmitted();
+                                }
+                            });
+
+                        }
+                    });
+
+                }else{
+                    Collections.sort(scores, new GradingComparator());
+                    final ParseUser grader = scores.get(0).getUser();
+
+                    //make new response
+                    Response newResponse = new Response();
+                    newResponse.setResponder(curUser);
+                    newResponse.setWrittenAnswer(answer);
+                    newResponse.setPrompt(prompt);
+
+                    String today = (new Date()).toString();
+                    String formattedToday = today.substring(4, 11) + today.substring(24);
+                    newResponse.setDateAnswered(formattedToday);
+                    newResponse.setGrader(grader);
+
+                    newResponse.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            //update grading user's Grading
+                            Grading grading = (Grading) grader.getParseObject(KEY_GRADING);
+                            grading.addLeftToGrade();
+                            grading.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    Toast.makeText(getContext(), getContext().getString(R.string.response_submitted), Toast.LENGTH_SHORT).show();
+                                    listener.onAnswerSubmitted();
+                                }
+                            });
+                        }
+                    });
+                }
+
                 //algorithm end
 
-                //make new response
-                Response newResponse = new Response();
-                newResponse.setResponder(curUser);
-                newResponse.setWrittenAnswer(answer);
-                newResponse.setPrompt(prompt);
-
-                String today = (new Date()).toString();
-                String formattedToday = today.substring(4, 11) + today.substring(24);
-                newResponse.setDateAnswered(formattedToday);
-                newResponse.setGrader(grader);
-                newResponse.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        //update grading user's Grading
-                        Grading grading = (Grading) grader.getParseObject(KEY_GRADING);
-                        grading.addLeftToGrade();
-                        grading.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                Toast.makeText(getContext(), getContext().getString(R.string.response_submitted), Toast.LENGTH_SHORT).show();
-                                listener.onAnswerSubmitted();
-                            }
-                        });
-                    }
-                });
             }
         });
 
@@ -340,8 +377,26 @@ public class RespondFragment extends Fragment {
                     Grading grading = (Grading) objects.get(i).getParseObject("grading");
                     scores.add(new GradingScore(grading, objects.get(i)));
                 }
-                Collections.sort(scores, new GradingComparator());
-                final ParseUser grader = scores.get(0).getUser();
+
+                final ParseUser[] grader = new ParseUser[1];
+
+                if(objects.size() == 0){
+                    //grader is DEFAULT object
+
+                    ParseQuery<ParseUser> query = new ParseQuery<ParseUser>(ParseUser.class);
+                    query.whereEqualTo("objectId", "JSYDmAKach");
+                    query.findInBackground(new FindCallback<ParseUser>() {
+                        @Override
+                        public void done(List<ParseUser> objects, ParseException e) {
+                            grader[0] = objects.get(0);
+                        }
+                    });
+
+                }else{
+                    Collections.sort(scores, new GradingComparator());
+                    grader[0] = scores.get(0).getUser();
+                }
+
                 //algorithm end
 
                 //make new response and save
@@ -354,12 +409,12 @@ public class RespondFragment extends Fragment {
                 String formattedToday = today.substring(4, 11) + today.substring(24);
                 newResponse.setDateAnswered(formattedToday);
 
-                newResponse.setGrader(grader);
+                newResponse.setGrader(grader[0]);
                 newResponse.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
                         //update grading user's Grading
-                        Grading grading = (Grading) grader.getParseObject(KEY_GRADING);
+                        Grading grading = (Grading) grader[0].getParseObject(KEY_GRADING);
                         grading.addLeftToGrade();
                         grading.saveInBackground(new SaveCallback() {
                             @Override

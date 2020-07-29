@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -104,40 +105,11 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
             tvScore.setVisibility(View.GONE);
             tvFeedback.setVisibility(View.GONE);
 
-//            mcvContainer.setOnTouchListener(new OnDoubleTapListener(itemView.getContext()) {
-//                @Override
-//                public void onDoubleTap(MotionEvent e) {
-//
-//
-//                    if(flag == false){
-//                        if(response.getGraded() == false){
-//                            tvNoGrade.setVisibility(View.VISIBLE);
-//                        }else{
-//                            tvScore.setVisibility(View.VISIBLE);
-//                            tvFeedback.setVisibility(View.VISIBLE);
-//                            tvScore.setText(context.getString(R.string.score_label) + " " + response.getGrade());
-//
-//                            if(response.getComments().equals("")){
-//                                tvFeedback.setText(context.getString(R.string.no_add_comments));
-//                            }else{
-//                                tvFeedback.setText(context.getString(R.string.add_comments) + " " + response.getComments());
-//                            }
-//                        }
-//                        flag=true;
-//                    }else{
-//                        tvNoGrade.setVisibility(View.GONE);
-//                        tvScore.setVisibility(View.GONE);
-//                        tvFeedback.setVisibility(View.GONE);
-//
-//                        flag = false;
-//                    }
-//
-//                }
-//            });
-
-            mcvContainer.setOnClickListener(new View.OnClickListener() {
+            mcvContainer.setOnTouchListener(new OnDoubleTapListener(itemView.getContext()) {
                 @Override
-                public void onClick(View view) {
+                public void onDoubleTap(MotionEvent e) {
+
+
                     if(flag == false){
                         if(response.getGraded() == false){
                             tvNoGrade.setVisibility(View.VISIBLE);
@@ -163,6 +135,35 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
 
                 }
             });
+
+//            mcvContainer.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    if(flag == false){
+//                        if(response.getGraded() == false){
+//                            tvNoGrade.setVisibility(View.VISIBLE);
+//                        }else{
+//                            tvScore.setVisibility(View.VISIBLE);
+//                            tvFeedback.setVisibility(View.VISIBLE);
+//                            tvScore.setText(context.getString(R.string.score_label) + " " + response.getGrade());
+//
+//                            if(response.getComments().equals("")){
+//                                tvFeedback.setText(context.getString(R.string.no_add_comments));
+//                            }else{
+//                                tvFeedback.setText(context.getString(R.string.add_comments) + " " + response.getComments());
+//                            }
+//                        }
+//                        flag=true;
+//                    }else{
+//                        tvNoGrade.setVisibility(View.GONE);
+//                        tvScore.setVisibility(View.GONE);
+//                        tvFeedback.setVisibility(View.GONE);
+//
+//                        flag = false;
+//                    }
+//
+//                }
+//            });
 
             tvPrompt.setText(response.getPrompt());
             tvDate.setText(Response.getRelativeTimeAgo(response.getTimestamp().toString()));
