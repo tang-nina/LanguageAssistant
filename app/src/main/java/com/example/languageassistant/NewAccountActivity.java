@@ -3,7 +3,6 @@ package com.example.languageassistant;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -87,14 +86,27 @@ public class NewAccountActivity extends AppCompatActivity {
                             });
                     AlertDialog dialog = builder.create();
                     dialog.show();
+                }else if(!isEmailValid(etEmail.getText().toString())){
+                    //alert user of wrong email format
+                    AlertDialog.Builder builder = new AlertDialog.Builder(NewAccountActivity.this);
+                    builder.setCancelable(true);
+                    builder.setMessage("Please enter a valid email (example@example.com).");
+                    builder.setPositiveButton(NewAccountActivity.this.getString(R.string.ok),
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }else{
                     ParseQuery<ParseUser> query = ParseQuery.getQuery(ParseUser.class);
                     query.whereEqualTo("username", etUsername.getText().toString());
                     query.findInBackground(new FindCallback<ParseUser>() {
                         public void done(List<ParseUser> objects, ParseException e) {
-                            if(e==null) {
+                            if (e == null) {
                                 int size = objects.size();
-                                if(size != 0){
+                                if (size != 0) {
                                     //username already in use alert
                                     AlertDialog.Builder builder = new AlertDialog.Builder(NewAccountActivity.this);
                                     builder.setCancelable(true);
@@ -113,7 +125,7 @@ public class NewAccountActivity extends AppCompatActivity {
                                     ParseUser user = new ParseUser();
                                     user.setUsername(etUsername.getText().toString());
                                     user.setPassword(etPassword.getText().toString());
-                                    user.setEmail(etEmail.getText().toString());
+
                                     user.put("nativeLanguage", etNativeLang.getText().toString());
                                     user.put("targetLanguage", etTargetLang.getText().toString());
                                     user.put("name", etName.getText().toString());
@@ -256,18 +268,21 @@ public class NewAccountActivity extends AppCompatActivity {
                                                 });
 
                                             } else {
-                                                Toast.makeText(NewAccountActivity.this, "Login unsuccessful.", Toast.LENGTH_SHORT).show();
-                                                Log.e(TAG, "Issue with login.", e);
+                                                System.out.println(e);
+                                                Toast.makeText(NewAccountActivity.this, "Something went wrong. Please check your info and try again.", Toast.LENGTH_SHORT).show();
                                                 return;
                                             }
                                         }
                                     });
+
+
+
+
                                 }
-                            }else{
-                                Log.e(TAG, "done: ", e);
                             }
                         }
                     });
+
                 }
             }
         });
@@ -327,5 +342,9 @@ public class NewAccountActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public boolean isEmailValid(CharSequence email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 }
