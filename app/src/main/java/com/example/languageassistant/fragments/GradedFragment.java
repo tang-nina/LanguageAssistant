@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.languageassistant.EndlessRecyclerViewScrollListener;
+import com.example.languageassistant.Keys;
 import com.example.languageassistant.R;
 import com.example.languageassistant.adapters.GradedAdapter;
 import com.example.languageassistant.models.Response;
@@ -31,17 +32,17 @@ import java.util.List;
  */
 public class GradedFragment extends Fragment {
     private static final String TAG = "GradedFragment";
-    private static final int NUMBER_TO_LOAD = 20;
+    private static final int NUMBER_TO_LOAD = 20; //number of responses to load with each call
 
     RecyclerView rvGraded;
     List<Response> responses;
     GradedAdapter adapter;
     LinearLayoutManager llm;
-    TextView tvNothingMessage;
 
-    Date lastPostTime;
     private SwipeRefreshLayout swipeContainer;
     private EndlessRecyclerViewScrollListener scrollListener;
+    Date lastPostTime;
+    TextView tvNothingMessage;
 
     public GradedFragment() {
         // Required empty public constructor
@@ -63,6 +64,7 @@ public class GradedFragment extends Fragment {
         rvGraded = view.findViewById(R.id.rvGraded);
         tvNothingMessage= view.findViewById(R.id.tvNothingMessage);
 
+        //set up recycler view
         responses = new ArrayList<Response>();
         adapter = new GradedAdapter(view.getContext(), responses);
         llm = new LinearLayoutManager(view.getContext());
@@ -86,7 +88,7 @@ public class GradedFragment extends Fragment {
         scrollListener = new EndlessRecyclerViewScrollListener(llm) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                loadNextDataFromApi(page);
+                loadNextDataFromApi();
             }
         };
         rvGraded.addOnScrollListener(scrollListener);
@@ -96,13 +98,13 @@ public class GradedFragment extends Fragment {
     }
 
     //load older data for endless scroll
-    public void loadNextDataFromApi(int offset) {
+    public void loadNextDataFromApi() {
         ParseQuery<Response> query = ParseQuery.getQuery(Response.class);
-        query.whereEqualTo(Response.KEY_RESPONDER, ParseUser.getCurrentUser());
-        query.addDescendingOrder(Response.KEY_CREATED);
+        query.whereEqualTo(Keys.KEY_RESPONDER, ParseUser.getCurrentUser());
+        query.addDescendingOrder(Keys.KEY_CREATED);
         query.setLimit(NUMBER_TO_LOAD);
         if(lastPostTime != null){
-            query.whereLessThan(Response.KEY_CREATED, lastPostTime);
+            query.whereLessThan(Keys.KEY_CREATED, lastPostTime);
             tvNothingMessage.setVisibility(View.GONE);
         }
         query.findInBackground(new FindCallback<Response>() {
@@ -120,10 +122,11 @@ public class GradedFragment extends Fragment {
         });
     }
 
+    //load most current responses
     private void getGradedResponses(final boolean onRefresh) {
         ParseQuery<Response> query = ParseQuery.getQuery(Response.class);
-        query.whereEqualTo(Response.KEY_RESPONDER, ParseUser.getCurrentUser());
-        query.addDescendingOrder(Response.KEY_CREATED);
+        query.whereEqualTo(Keys.KEY_RESPONDER, ParseUser.getCurrentUser());
+        query.addDescendingOrder(Keys.KEY_CREATED);
         query.setLimit(NUMBER_TO_LOAD);
         query.findInBackground(new FindCallback<Response>() {
             public void done(List<Response> objects, ParseException e) {

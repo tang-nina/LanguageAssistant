@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.languageassistant.EndlessRecyclerViewScrollListener;
+import com.example.languageassistant.Keys;
 import com.example.languageassistant.R;
 import com.example.languageassistant.adapters.GradingAdapter;
 import com.example.languageassistant.models.Response;
@@ -33,17 +34,17 @@ import java.util.List;
 
 public class GradingFragment extends Fragment {
     private static final String TAG = "GradingFragment";
-    private static final int NUMBER_TO_LOAD = 20;
+    private static final int NUMBER_TO_LOAD = 20; //number of responses to load with each call
 
     RecyclerView rvGrading;
     List<Response> responses;
     GradingAdapter adapter;
     LinearLayoutManager llm;
-    TextView tvNothingMessage;
 
     private SwipeRefreshLayout swipeContainer;
     private EndlessRecyclerViewScrollListener scrollListener;
     Date lastPostTime;
+    TextView tvNothingMessage;
 
     public GradingFragment() {
         // Required empty public constructor
@@ -65,6 +66,7 @@ public class GradingFragment extends Fragment {
         rvGrading = view.findViewById(R.id.rvGrading);
         tvNothingMessage = view.findViewById(R.id.tvNothingMessage);
 
+        //set up recycler view
         responses = new ArrayList<Response>();
         adapter = new GradingAdapter(view.getContext(), responses, this);
         llm = new LinearLayoutManager(view.getContext());
@@ -101,12 +103,12 @@ public class GradingFragment extends Fragment {
     //for loading older data in endless scroll
     private void loadNextDataFromApi() {
         ParseQuery<Response> query = ParseQuery.getQuery(Response.class);
-        query.whereEqualTo(Response.KEY_GRADER, ParseUser.getCurrentUser());
-        query.whereEqualTo(Response.KEY_GRADED, false);
+        query.whereEqualTo(Keys.KEY_GRADING_USER, ParseUser.getCurrentUser());
+        query.whereEqualTo(Keys.KEY_GRADED, false);
         query.setLimit(NUMBER_TO_LOAD);
-        query.addDescendingOrder(Response.KEY_CREATED);
+        query.addDescendingOrder(Keys.KEY_CREATED);
         if(lastPostTime != null){
-            query.whereLessThan(Response.KEY_CREATED, lastPostTime);
+            query.whereLessThan(Keys.KEY_CREATED, lastPostTime);
             tvNothingMessage.setVisibility(View.GONE);
         }
         query.findInBackground(new FindCallback<Response>() {
@@ -124,12 +126,13 @@ public class GradingFragment extends Fragment {
         });
     }
 
+    //load most recent responses
     private void getGradingResponses(final boolean onRefresh){
         ParseQuery<Response> query = ParseQuery.getQuery(Response.class);
-        query.whereEqualTo(Response.KEY_GRADER, ParseUser.getCurrentUser());
-        query.whereEqualTo(Response.KEY_GRADED, false);
+        query.whereEqualTo(Keys.KEY_GRADING_USER, ParseUser.getCurrentUser());
+        query.whereEqualTo(Keys.KEY_GRADED, false);
         query.setLimit(NUMBER_TO_LOAD);
-        query.addDescendingOrder(Response.KEY_CREATED);
+        query.addDescendingOrder(Keys.KEY_CREATED);
         query.findInBackground(new FindCallback<Response>() {
             public void done(List<Response> objects, ParseException e) {
                 if(e == null){
@@ -156,7 +159,7 @@ public class GradingFragment extends Fragment {
         });
     }
 
-    //method to ensure placeholder message is correctly shown/change it to correct visibility
+    //method to ensure placeholder message is correctly shown or to change it to correct visibility
     public void setTvNothingMessage(){
         if(responses.size()==0){
             tvNothingMessage.setVisibility(View.VISIBLE);

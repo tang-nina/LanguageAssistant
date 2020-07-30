@@ -13,6 +13,7 @@ public class GradingScore {
         score = grading.getTotalGraded()*0.2 + grading.getLeftToGrade()*0.8;
     }
 
+    //gets calculated score for this grader
     public double getScore(){
         return score;
     }
@@ -20,5 +21,4 @@ public class GradingScore {
     public ParseUser getUser(){
         return user;
     }
-
 }

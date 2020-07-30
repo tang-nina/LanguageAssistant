@@ -3,7 +3,6 @@ package com.example.languageassistant.models;
 import com.parse.ParseUser;
 
 public class ConvoPartnerScore {
-
     private ParseUser user;
     private double score;
 
@@ -12,10 +11,12 @@ public class ConvoPartnerScore {
         this.score = score;
     }
 
+    //gets score of this partner
     public double getScore(){
         return score;
     }
 
+    //gets this partner
     public ParseUser getUser(){
         return user;
     }

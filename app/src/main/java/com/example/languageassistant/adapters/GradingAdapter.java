@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.languageassistant.Keys;
 import com.example.languageassistant.R;
 import com.example.languageassistant.fragments.GradingFragment;
 import com.example.languageassistant.models.Grading;
@@ -36,7 +37,7 @@ import java.util.List;
 public class GradingAdapter extends RecyclerView.Adapter<com.example.languageassistant.adapters.GradingAdapter.ViewHolder> {
     Context context;
     List<Response> responses;
-    GradingFragment gradingFragment;
+    GradingFragment gradingFragment; //fragment that these recycler view is being displayed on
 
     public GradingAdapter(Context context, List<Response> responses, GradingFragment gf) {
         this.context = context;
@@ -55,7 +56,6 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
     public void onBindViewHolder(@NonNull GradingAdapter.ViewHolder holder, int position) {
         Response response = responses.get(position);
         holder.bind(response);
-
     }
 
     @Override
@@ -80,9 +80,8 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
      */
     class ViewHolder extends RecyclerView.ViewHolder {
         public static final int MAX_COMMENT_LENGTH = 500;
-        public static final String KEY_GRADING = "grading";
 
-        MaterialCardView mcvContainer;
+        MaterialCardView mcvContainer; //container card for the response
         TextView tvPrompt;
         TextView tvDate;
         TextView tvResponse;
@@ -117,6 +116,7 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
                 tvResponse.setText(context.getString(R.string.play_recording) + " ");
                 tvDate.setText(Response.getRelativeTimeAgo(response.getTimestamp().toString()));
 
+                //set up audio player
                 final MediaPlayer mediaPlayer = new MediaPlayer();
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 String url = response.getRecordedAnswer().getUrl();
@@ -147,12 +147,15 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
                 btnSubmit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        //get score and comments
                         final float rating = rbRating.getRating();
                         final String comment = tietComments.getText().toString();
 
-                        if (comment.length() > MAX_COMMENT_LENGTH) { //comments are too long
+                        if (comment.length() > MAX_COMMENT_LENGTH) {
+                            //comments are too long
                             Toast.makeText(context, context.getString(R.string.comments_long), Toast.LENGTH_SHORT).show();
-                        } else if (rating == 0.0) { //pop up asking if they really meant to give a zero
+                        } else if (rating == 0.0) {
+                            //pop up asking if they really meant to give a zero
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             builder.setCancelable(true);
                             builder.setMessage(context.getString(R.string.confirm_question));
@@ -174,8 +177,8 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
 
                             AlertDialog dialog = builder.create();
                             dialog.show();
-
-                        } else { //everything is ok for a submission
+                        } else {
+                            //everything is ok for a submission
                             mediaPlayer.release();
                             submitFeedback(response, rating, comment, getAdapterPosition());
                         }
@@ -191,12 +194,15 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
                 btnSubmit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        //get score and comments
                         final float rating = rbRating.getRating();
                         final String comment = tietComments.getText().toString();
 
-                        if (comment.length() > MAX_COMMENT_LENGTH) { //comment is too long
+                        if (comment.length() > MAX_COMMENT_LENGTH) {
+                            //comment is too long
                             Toast.makeText(context, context.getString(R.string.comments_long), Toast.LENGTH_SHORT).show();
-                        } else if (rating == 0.0) { //pop up asking if they really meant to give a zero
+                        } else if (rating == 0.0) {
+                            //pop up asking if they really meant to give a zero
                             AlertDialog.Builder builder = new AlertDialog.Builder(context);
                             builder.setCancelable(true);
                             builder.setMessage(context.getString(R.string.confirm_question));
@@ -217,25 +223,26 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
 
                             AlertDialog dialog = builder.create();
                             dialog.show();
-                        } else { //submit if everything is good
+                        } else {
+                            //submit if everything is good
                             submitFeedback(response, rating, comment, getAdapterPosition());
                         }
                     }
                 });
-
             }
         }
 
-        //submits the feedback by adding the grading info to the parse response object
-        private void submitFeedback(Response response, float rating, String comment, final int position) {
+        //submits the feedback by adding the score and comments into the Response parse object
+        private void submitFeedback(Response response, float rating, String comments, final int position) {
             response.setGrade((int) rating);
-            response.setComments(comment);
+            response.setComments(comments);
             response.setGraded(true);
             response.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {
                     if (e == null) {
-                        Grading grading = (Grading) ParseUser.getCurrentUser().getParseObject(KEY_GRADING);
+                        //updates current user's grading object
+                        Grading grading = (Grading) ParseUser.getCurrentUser().getParseObject(Keys.KEY_GRADING);
                         grading.addGraded();
                         grading.subtractLeftToGrade();
                         grading.saveInBackground(new SaveCallback() {
@@ -247,7 +254,7 @@ public class GradingAdapter extends RecyclerView.Adapter<com.example.languageass
                                     rbRating.setRating(0);
                                     tietComments.getText().clear();
 
-                                    //clear the response from the recycler view right away.
+                                    //clear the response from the recycler view right away
                                     responses.remove(position);
                                     notifyDataSetChanged();
                                     gradingFragment.setTvNothingMessage();

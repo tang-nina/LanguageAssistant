@@ -7,11 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import com.example.languageassistant.Keys;
 import com.example.languageassistant.R;
 import com.google.android.material.button.MaterialButton;
 import com.parse.ParseException;
@@ -25,19 +27,17 @@ import com.parse.SaveCallback;
  */
 public class EditLocFragment extends DialogFragment {
 
+    //interface to communicate with main activity
     public interface OnItemSelectedListener {
         public void onLocationUpdate();
     }
 
-    private OnItemSelectedListener listener;
-
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_CITY = "city";
     private static final String ARG_REGION = "region";
-
     private String city;
     private String region;
 
+    private OnItemSelectedListener listener;
 
     EditText etCity;
     EditText etRegion;
@@ -48,13 +48,7 @@ public class EditLocFragment extends DialogFragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment EditLocFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+    //factory method to get new instance of this fragment and communicate arguments
     public static EditLocFragment newInstance(String city, String region) {
         EditLocFragment fragment = new EditLocFragment();
         Bundle args = new Bundle();
@@ -87,33 +81,28 @@ public class EditLocFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_edit_loc, container, false);
     }
-
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // Get field from view
+
         etCity = (EditText) view.findViewById(R.id.etCity);
         etRegion = view.findViewById(R.id.etRegion);
         btnCancel = view.findViewById(R.id.btnCancel);
         btnSave = view.findViewById(R.id.btnSave);
 
-        // Fetch arguments from bundle and set title
-        getDialog().setTitle("Edit Target Language");
+        // Set title and location info
+        getDialog().setTitle(getContext().getString(R.string.edit_loc));
         etCity.setText(city);
         etRegion.setText(region);
-        // Show soft keyboard automatically and request focus to field
-        //etLang.requestFocus();
         getDialog().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 
         btnCancel.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                //listener.onUpdateSubmitted(false);
                 dismiss();
             }
         });
@@ -121,18 +110,35 @@ public class EditLocFragment extends DialogFragment {
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ParseUser.getCurrentUser().put("location", etCity.getText().toString().trim() +", "+ etRegion.getText().toString().trim());
-                ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if(e==null){
-                            dismiss();
-                            listener.onLocationUpdate();
-                        }
+                String newCity= etCity.getText().toString().trim();
+                String newRegion= etRegion.getText().toString().trim();
+
+                if((newCity.length() != 0 && newRegion.length() == 0) || (newCity.length() == 0 && newRegion.length() != 0) ){
+                    //cannot have only city or only region inputted
+                    Toast.makeText(getContext(), getContext().getString(R.string.edit_loc_error), Toast.LENGTH_SHORT).show();
+                }else{
+                    if(newCity.length()==0 && newRegion.length() ==0){
+                        //leaving everything blank results in no location info
+                        ParseUser.getCurrentUser().put(Keys.KEY_LOC, "");
+                    }else{
+                        //update new location info
+                        ParseUser.getCurrentUser().put(Keys.KEY_LOC, etCity.getText().toString().trim() +", "+ etRegion.getText().toString().trim());
                     }
-                });
+
+                    //save new location info
+                    ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if(e==null){
+                                dismiss();
+                                listener.onLocationUpdate();
+                            }else{
+                                Toast.makeText(getContext(), getContext().getString(R.string.try_again), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
             }
         });
-
     }
 }

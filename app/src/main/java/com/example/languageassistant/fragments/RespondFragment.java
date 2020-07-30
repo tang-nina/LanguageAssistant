@@ -22,6 +22,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.example.languageassistant.Keys;
 import com.example.languageassistant.R;
 import com.example.languageassistant.models.Grading;
 import com.example.languageassistant.models.GradingComparator;
@@ -48,10 +49,9 @@ import java.util.List;
 public class RespondFragment extends Fragment {
     private static final String TAG = "RespondFragment";
     private static final String LOG_TAG = "AudioRecordTest";
-    private static final String PROMPT = "prompt";
     private static final String RECORD_TAG = "record_button";
     private static final String STOP_TAG = "stop_button";
-    private static final String KEY_GRADING = "grading";
+    private static final String PROMPT_TAG = "prompt";
     private static final int MAX_COMMENT_LENGTH = 1000;
 
     // File path of recorded audio
@@ -82,14 +82,11 @@ public class RespondFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     */
+    //factory method for creating a new instance of this fragment
     public static RespondFragment newInstance(String prompt) {
         RespondFragment fragment = new RespondFragment();
         Bundle args = new Bundle();
-        args.putSerializable(PROMPT, prompt);
+        args.putSerializable(PROMPT_TAG, prompt);
         fragment.setArguments(args);
         return fragment;
     }
@@ -98,7 +95,7 @@ public class RespondFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            prompt = getArguments().getString(PROMPT);
+            prompt = getArguments().getString(PROMPT_TAG);
         }
     }
 
@@ -147,12 +144,12 @@ public class RespondFragment extends Fragment {
                 } else if (answer.length() == 0) { //no response
                     Toast.makeText(view.getContext(), view.getContext().getString(R.string.no_response), Toast.LENGTH_SHORT).show();
                 } else {
-                    makeNewWrittenResponse(prompt, answer);
+                    makeNewResponse(prompt, answer, null, true);
                 }
             }
         });
 
-        //record answer
+        //record an answer
         ivRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -168,7 +165,8 @@ public class RespondFragment extends Fragment {
                             ivRecord.setTag(STOP_TAG);
                             tvRecordInstructions.setText(getContext().getString(R.string.stop_recording));
 
-                            rlPlay.setVisibility(View.INVISIBLE);
+                            rlPlay.setVisibility(View.GONE);
+                            btnSubmitRecording.setVisibility(View.GONE);
                             mediaRecorder = new MediaRecorder();
                             // Set the audio format and encoder
                             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -179,7 +177,39 @@ public class RespondFragment extends Fragment {
 
                             // Start the recording
                             try {
+                                mediaRecorder.setMaxDuration(60000); //one minute limit
                                 mediaRecorder.prepare();
+                                mediaRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
+                                    @Override
+                                    public void onInfo(MediaRecorder mr, int what, int extra) {
+                                        //stop recording if one minute has passed
+                                        if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
+                                            Toast.makeText(getContext(), "One minute reached. Recording has stopped.", Toast.LENGTH_SHORT).show();
+
+                                            Glide.with(getContext()).load(R.drawable.ic_baseline_fiber_manual_record_24).into(ivRecord);
+                                            ivRecord.setTag(RECORD_TAG);
+                                            tvRecordInstructions.setText(getContext().getString(R.string.start_recording));
+
+                                            //stop recording
+                                            mediaRecorder.stop();
+                                            mediaRecorder.reset();
+                                            mediaRecorder.release();
+
+                                            rlPlay.setVisibility(View.VISIBLE);
+                                            btnSubmitRecording.setVisibility(View.VISIBLE);
+
+                                            //prepare audio player
+                                            mediaPlayer = new MediaPlayer();
+                                            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                                            try {
+                                                mediaPlayer.setDataSource(mFileName.getAbsolutePath());
+                                                mediaPlayer.prepare();
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
+                                });
                                 mediaRecorder.start();
 
                             } catch (IOException e) {
@@ -246,7 +276,7 @@ public class RespondFragment extends Fragment {
                     if (mediaPlayer != null) {
                         mediaPlayer.release();
                     }
-                    makeNewAudioResponse(prompt, mFileName);
+                    makeNewResponse(prompt, null, mFileName, false);
                 }
             }
         });
@@ -269,165 +299,110 @@ public class RespondFragment extends Fragment {
         return new File(mediaStorageDir.getPath() + File.separator + fileName);
     }
 
-    //creates new Response with written answer on parse
-    private void makeNewWrittenResponse(final String prompt, final String answer) {
+    //creates new Response parse + algorithm to decide who grades it
+    private void makeNewResponse(final String prompt, final String answer, final File recording, final boolean written) {
         final ParseUser curUser = ParseUser.getCurrentUser();
 
-        //figure out grading user and put that in - get all grading objects, then see which one is the bext
-
-        //algorthm start
         ParseQuery<ParseUser> query = ParseQuery.getQuery(ParseUser.class);
-        query.whereEqualTo("nativeLanguage", curUser.getString("targetLanguage"));
+        query.whereEqualTo(Keys.KEY_NATIVE_LANG, curUser.getString(Keys.KEY_TARGET_LANG)); //get all users who can grade in the targetlanguage
         query.findInBackground(new FindCallback<ParseUser>() {
             @Override
             public void done(List<ParseUser> objects, ParseException e) {
+                if (e == null) {
+                    ArrayList<GradingScore> scores = new ArrayList<GradingScore>();
 
-                ArrayList<GradingScore> scores = new ArrayList<GradingScore>();
-                for (int i = 0; i < objects.size(); i++) {
-                    Grading grading = (Grading) objects.get(i).getParseObject("grading");
-                    scores.add(new GradingScore(grading, objects.get(i)));
-                }
+                    for (int i = 0; i < objects.size(); i++) {
+                        Grading grading = (Grading) objects.get(i).getParseObject(Keys.KEY_GRADING);
+                        scores.add(new GradingScore(grading, objects.get(i)));
+                    }
 
-                if(objects.size() == 0){
-                    //grader is DEFAULT object
+                    if (objects.size() == 0) { //if none of these users exist
+                        ParseQuery<ParseUser> query = new ParseQuery<ParseUser>(ParseUser.class);
+                        query.whereEqualTo(Keys.KEY_ID, "JSYDmAKach");
+                        query.findInBackground(new FindCallback<ParseUser>() {
+                            @Override
+                            public void done(List<ParseUser> objects, ParseException e) {
+                                if (e == null) {
+                                    //make new response with grader as the DEFAULT user in the database
+                                    Response newResponse = new Response();
+                                    newResponse.setResponder(curUser);
+                                    newResponse.setPrompt(prompt);
+                                    if (written) {
+                                        newResponse.setWrittenAnswer(answer);
+                                    } else {
+                                        newResponse.setRecordedAnswer(recording);
+                                    }
 
-                    ParseQuery<ParseUser> query = new ParseQuery<ParseUser>(ParseUser.class);
-                    query.whereEqualTo("objectId", "JSYDmAKach");
-                    query.findInBackground(new FindCallback<ParseUser>() {
-                        @Override
-                        public void done(List<ParseUser> objects, ParseException e) {
-                            //make new response
-                            Response newResponse = new Response();
-                            newResponse.setResponder(curUser);
+                                    String today = (new Date()).toString();
+                                    String formattedToday = today.substring(4, 11) + today.substring(24);
+                                    newResponse.setDateAnswered(formattedToday);
+                                    newResponse.setGrader(objects.get(0));
+
+                                    newResponse.saveInBackground(new SaveCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            if (e == null) {
+                                                Toast.makeText(getContext(), getContext().getString(R.string.response_submitted), Toast.LENGTH_SHORT).show();
+                                                listener.onAnswerSubmitted();
+                                            } else {
+                                                Toast.makeText(getContext(), getContext().getString(R.string.try_again), Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    Toast.makeText(getContext(), getContext().getString(R.string.try_again), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+                    } else {
+                        //pick best grader
+                        Collections.sort(scores, new GradingComparator());
+                        final ParseUser grader = scores.get(0).getUser();
+
+                        //make new response
+                        Response newResponse = new Response();
+                        newResponse.setResponder(curUser);
+                        newResponse.setPrompt(prompt);
+                        if (written) {
                             newResponse.setWrittenAnswer(answer);
-                            newResponse.setPrompt(prompt);
-
-                            String today = (new Date()).toString();
-                            String formattedToday = today.substring(4, 11) + today.substring(24);
-                            newResponse.setDateAnswered(formattedToday);
-                            newResponse.setGrader(objects.get(0));
-
-                            newResponse.saveInBackground(new SaveCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                    //did not update DEFAULT's grading object ... maybe I should?
-                                 Toast.makeText(getContext(), getContext().getString(R.string.response_submitted), Toast.LENGTH_SHORT).show();
-                                 listener.onAnswerSubmitted();
-                                }
-                            });
-
+                        } else {
+                            newResponse.setRecordedAnswer(recording);
                         }
-                    });
 
-                }else{
-                    Collections.sort(scores, new GradingComparator());
-                    final ParseUser grader = scores.get(0).getUser();
+                        String today = (new Date()).toString();
+                        String formattedToday = today.substring(4, 11) + today.substring(24);
+                        newResponse.setDateAnswered(formattedToday);
+                        newResponse.setGrader(grader);
 
-                    //make new response
-                    Response newResponse = new Response();
-                    newResponse.setResponder(curUser);
-                    newResponse.setWrittenAnswer(answer);
-                    newResponse.setPrompt(prompt);
-
-                    String today = (new Date()).toString();
-                    String formattedToday = today.substring(4, 11) + today.substring(24);
-                    newResponse.setDateAnswered(formattedToday);
-                    newResponse.setGrader(grader);
-
-                    newResponse.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            //update grading user's Grading
-                            Grading grading = (Grading) grader.getParseObject(KEY_GRADING);
-                            grading.addLeftToGrade();
-                            grading.saveInBackground(new SaveCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                    Toast.makeText(getContext(), getContext().getString(R.string.response_submitted), Toast.LENGTH_SHORT).show();
-                                    listener.onAnswerSubmitted();
-                                }
-                            });
-                        }
-                    });
-                }
-
-                //algorithm end
-
-            }
-        });
-
-    }
-
-    //creates new Response with audio answer on parse
-    private void makeNewAudioResponse(final String prompt, final File recording) {
-        final ParseUser curUser = ParseUser.getCurrentUser();
-
-        //figure out grading user and put that in - get all grading objects, then see which one is the bext
-
-        //algorithm start
-        //prereq: objects will not be 0. Should always be another user who can speak the language.
-        ParseQuery<ParseUser> query = ParseQuery.getQuery(ParseUser.class);
-        query.whereEqualTo("nativeLanguage", curUser.getString("targetLanguage"));
-        query.findInBackground(new FindCallback<ParseUser>() {
-            @Override
-            public void done(List<ParseUser> objects, ParseException e) {
-
-                ArrayList<GradingScore> scores = new ArrayList<GradingScore>();
-                for(int i= 0; i<objects.size(); i++){
-                    Grading grading = (Grading) objects.get(i).getParseObject("grading");
-                    scores.add(new GradingScore(grading, objects.get(i)));
-                }
-
-                final ParseUser[] grader = new ParseUser[1];
-
-                if(objects.size() == 0){
-                    //grader is DEFAULT object
-
-                    ParseQuery<ParseUser> query = new ParseQuery<ParseUser>(ParseUser.class);
-                    query.whereEqualTo("objectId", "JSYDmAKach");
-                    query.findInBackground(new FindCallback<ParseUser>() {
-                        @Override
-                        public void done(List<ParseUser> objects, ParseException e) {
-                            grader[0] = objects.get(0);
-                        }
-                    });
-
-                }else{
-                    Collections.sort(scores, new GradingComparator());
-                    grader[0] = scores.get(0).getUser();
-                }
-
-                //algorithm end
-
-                //make new response and save
-                Response newResponse = new Response();
-                newResponse.setResponder(curUser);
-                newResponse.setRecordedAnswer(recording);
-                newResponse.setPrompt(prompt);
-
-                String today = (new Date()).toString();
-                String formattedToday = today.substring(4, 11) + today.substring(24);
-                newResponse.setDateAnswered(formattedToday);
-
-                newResponse.setGrader(grader[0]);
-                newResponse.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        //update grading user's Grading
-                        Grading grading = (Grading) grader[0].getParseObject(KEY_GRADING);
-                        grading.addLeftToGrade();
-                        grading.saveInBackground(new SaveCallback() {
+                        newResponse.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
-                                Toast.makeText(getContext(), getContext().getString(R.string.response_submitted), Toast.LENGTH_SHORT).show();
-                                listener.onAnswerSubmitted();
+                                if (e == null) {
+                                    //update grading user's Grading object
+                                    Grading grading = (Grading) grader.getParseObject(Keys.KEY_GRADING);
+                                    grading.addLeftToGrade();
+                                    grading.saveInBackground(new SaveCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            if (e == null) {
+                                                Toast.makeText(getContext(), getContext().getString(R.string.response_submitted), Toast.LENGTH_SHORT).show();
+                                                listener.onAnswerSubmitted();
+                                            } else {
+                                                Toast.makeText(getContext(), getContext().getString(R.string.try_again), Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    Toast.makeText(getContext(), getContext().getString(R.string.try_again), Toast.LENGTH_SHORT).show();
+                                }
                             }
                         });
                     }
-                });
-
+                } else {
+                    Toast.makeText(getContext(), getContext().getString(R.string.try_again), Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
-
 }

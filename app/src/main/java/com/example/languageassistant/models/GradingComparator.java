@@ -2,6 +2,7 @@ package com.example.languageassistant.models;
 
 import java.util.Comparator;
 
+//comparator for sorting Grading objects
 public class GradingComparator implements Comparator<GradingScore> {
     @Override
     public int compare(GradingScore gradingScore1, GradingScore gradingScore2) {

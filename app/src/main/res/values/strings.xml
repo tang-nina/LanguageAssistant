@@ -43,10 +43,21 @@
     <string name="fb_instruc">Link your Facebook account for a better conversation buddy \nrecommendation. We will use your location and birthday.</string>
     <string name="submit">Submit</string>
     <string name="write_response">Write a response:</string>
-    <string name="record_response">Or record a response:</string>
+    <string name="record_response">Or record a response: \nOne minute maximum.</string>
     <string name="feedback">Please give your feedback on this response.</string>
     <string name="any_add_comments">Any additional comments?</string>
     <string name="not_graded">Not graded yet.</string>
-    <string name="facebook_app_id">291329435621536</string>
-    <string name="fb_login_protocol_scheme">fb291329435621536</string>
+    <string name="edit_lang">Edit Target Language</string>
+    <string name="edit_loc">Edit Current Location</string>
+    <string name="bday_na">Birthday: N/A</string>
+    <string name="bday">Birthday:</string>
+    <string name="loc_na">Location: N/A</string>
+    <string name="loc">Location:</string>
+    <string name="edit_loc_error">Please fill out both fields or leave both blank to delete your location.</string>
+    <string name="try_again">Something went wrong. Please try again.</string>
+    <string name="error_login">Login unsuccessful. Please check your username and password.</string>
+    <string name="fill_all">Please fill in all fields.</string>
+    <string name="valid_email">Please enter a valid email (example@example.com).</string>
+    <string name="username_repeat">This username is already in use. Please choose another one.</string>
+    <string name="new_acc_error">Something went wrong. Please check your info and try again.</string>
 </resources>

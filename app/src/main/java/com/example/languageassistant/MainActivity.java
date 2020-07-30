@@ -35,8 +35,10 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnIt
 
                 switch (item.getItemId()) {
                     case R.id.action_profile:
-                        fragment = new ProfileFragment(); //make sure the flag is going in as false
-                        fragmentManager.beginTransaction().replace(R.id.flContainer, fragment).commit();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        ProfileFragment fragmentProfile = ProfileFragment.newInstance(false);
+                        ft.replace(R.id.flContainer, fragmentProfile);
+                        ft.commit();
                         break;
                     case R.id.action_home:
                         fragment = new HomeFragment();
@@ -58,7 +60,6 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnIt
         });
 
         bottomNavigationView.setSelectedItemId(R.id.action_home); //default tab is home fragment
-
     }
 
     //interacting with respond fragment
@@ -79,22 +80,17 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnIt
                 android.R.anim.fade_out).replace(R.id.flContainer, fragmentHome).commit();
     }
 
+    //interacting with profile fragment after language is changed
     @Override
     public void onUpdateSubmitted() {
-
-
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ProfileFragment fragmentProfile = ProfileFragment.newInstance(true);
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         ft.replace(R.id.flContainer, fragmentProfile);
         ft.commit();
-
-//
-//        ProfileFragment fragmentProfile = new ProfileFragment();
-//        fragmentManager.beginTransaction().setCustomAnimations(android.R.anim.fade_in,
-//                android.R.anim.fade_out).replace(R.id.flContainer, fragmentProfile).commit();
     }
 
+    //interacting with profile fragment after location is changed
     @Override
     public void onLocationUpdate() {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

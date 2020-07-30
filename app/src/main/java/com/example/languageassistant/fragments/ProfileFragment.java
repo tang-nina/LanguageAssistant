@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.bumptech.glide.Glide;
+import com.example.languageassistant.Keys;
 import com.example.languageassistant.LoginActivity;
 import com.example.languageassistant.R;
 import com.example.languageassistant.models.ConvoBuddy;
@@ -48,18 +49,11 @@ import static android.app.Activity.RESULT_OK;
 public class ProfileFragment extends Fragment {
     private static final String TAG = "ProfileFragment";
     public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 50;
-    private static final String KEY_NAME = "name";
-    private static final String KEY_NATIVE_LANG = "nativeLanguage";
-    private static final String KEY_TARGET_LANG = "targetLanguage";
-    private static final String KEY_CONVO = "convoBuddy";
-    private static final String KEY_PROFILE_PIC = "profilePic";
-   // private static final String DEFAULT_ID = "JSYDmAKach";
 
     public String photoFileName = "photo.jpg";
     private File photoFile;
 
-    ParseUser user;
-   // ParseUser defaultUser;
+    ParseUser user; //current user
 
     MaterialButton btnLogout;
     ImageView ivProfilePic;
@@ -71,20 +65,19 @@ public class ProfileFragment extends Fragment {
     TextView tvConvoBuddy;
     ImageView ivTarget;
 
+    //FB sdk info
     TextView tvBday;
     TextView tvLoc;
     ImageView ivLoc;
 
-    boolean prevFlag = false;
+    //flag for if this fragment is being reloaded from a previous fragmen
+    boolean reloaded = false;
 
     public ProfileFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     */
+    //factory method for this fragment
     public static ProfileFragment newInstance(boolean prev) {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
@@ -97,7 +90,7 @@ public class ProfileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            prevFlag = getArguments().getBoolean("FLAG");
+            reloaded = getArguments().getBoolean("FLAG");
         }
     }
 
@@ -108,9 +101,7 @@ public class ProfileFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @NonNull Bundle savedInstanceState){
-        System.out.println("FLAG:" + prevFlag);
-
+    public void onViewCreated(@NonNull View view, @NonNull Bundle savedInstanceState) {
         user = ParseUser.getCurrentUser();
 
         ivProfilePic = view.findViewById(R.id.ivProfilePic);
@@ -134,63 +125,57 @@ public class ProfileFragment extends Fragment {
             public void onClick(View view) {
                 ParseUser.logOut();
 
+                //back to login page
                 Intent intent = new Intent(view.getContext(), LoginActivity.class);
                 startActivity(intent);
                 getActivity().finish();
             }
         });
 
-        tvName.setText(user.getString(KEY_NAME));
+        tvName.setText(user.getString(Keys.KEY_NAME));
         tvUsername.setText(getContext().getString(R.string.username) + " " + user.getUsername());
-        tvNativeLang.setText(getContext().getString(R.string.native_lang) + " " + user.getString(KEY_NATIVE_LANG));
-        tvTargetLang.setText(getContext().getString(R.string.target_lang) + " " + user.getString(KEY_TARGET_LANG));
+        tvNativeLang.setText(getContext().getString(R.string.native_lang) + " " + user.getString(Keys.KEY_NATIVE_LANG));
+        tvTargetLang.setText(getContext().getString(R.string.target_lang) + " " + user.getString(Keys.KEY_TARGET_LANG));
 
-
-        String birthday = user.getString("birthday");
-        if(birthday == null || birthday.length() == 0){
-            tvBday.setText("Birthday: N/A");
-        }else{
-            tvBday.setText("Birthday: " + birthday);
+        String birthday = user.getString(Keys.KEY_BDAY);
+        if (birthday == null || birthday.length() == 0) {
+            tvBday.setText(getContext().getString(R.string.bday_na));
+        } else {
+            tvBday.setText(getContext().getString(R.string.bday) + " " + birthday);
         }
 
-
-        String location  = user.getString("location");
-        if(location == null || location.length() == 0){
+        String location = user.getString(Keys.KEY_LOC);
+        if (location == null || location.length() == 0) {
             location = "";
-            tvLoc.setText("Location: N/A");
-        }else{
-            tvLoc.setText("Location: " + location);
+            tvLoc.setText(getContext().getString(R.string.loc_na));
+        } else {
+            tvLoc.setText(getContext().getString(R.string.loc) + " " + location);
         }
 
-        ConvoBuddy curConvo = (ConvoBuddy) user.getParseObject("convo");
+        //convo object of current user
+        ConvoBuddy curConvo = (ConvoBuddy) user.getParseObject(Keys.KEY_CONVO);
 
-        //should probably check that the language actually changed ... ?
-        if (prevFlag == true) { //this is being loaded after updating a language
+        if (reloaded == true) { //this is being loaded after updating a language
             ParseUser prevPartner = curConvo.getBuddy();
-            String prevId = "";
-            if(prevPartner != null){
+            String prevId = ""; //id of previous partner
+            if (prevPartner != null) {
                 prevId = prevPartner.getObjectId();
             }
 
             convoBuddyNoPartner(user, true); //assign a new buddy using new language
 
-            if (!(prevPartner == null) && !(prevId.equals(user.getObjectId()))) { //if they had a previous buddy in the old language, we must reassign the new buddy too
-                //For the prev partner of user A, do the “makes new account” procedure for his target lang too.
-                convoBuddyNoPartner(prevPartner, false); //assign a new buddy using new language
+            //if they had a previous buddy in the old language that was not themselves, we must reassign the new buddy too
+            if (!(prevPartner == null) && !(prevId.equals(user.getObjectId()))) {
+                convoBuddyNoPartner(prevPartner, false); //assign prev buddy a new partner
             }
         } else { //this is being normally loaded
-
             if (curConvo.getBuddy() == null) { //if no partner
                 convoBuddyNoPartner(user, true); //try to assign one
-            } else {
-                //keep your partner
+            } else { //keep your partner
                 try {
-
                     Email email = (Email) curConvo.getBuddy().fetchIfNeeded().getParseObject("emailObject"); //email of partner
-
-                    tvConvoBuddy.setText(curConvo.getBuddy().fetchIfNeeded().getString(KEY_NAME) + " (" + email.getEmail() +")");
-                    //tvConvoBuddy.setText(curConvo.getBuddy().getString(KEY_NAME) + " " + curConvo.getBuddy().getEmail());
-
+                    //set name and email of partner on screen
+                    tvConvoBuddy.setText(curConvo.getBuddy().fetchIfNeeded().getString(Keys.KEY_NAME) + " (" + email.getEmail() + ")");
                 } catch (ParseException e1) {
                     e1.printStackTrace();
                 }
@@ -198,169 +183,167 @@ public class ProfileFragment extends Fragment {
         }
 
         //load profile pic
-        Glide.with(getContext()).load(user.getParseFile(KEY_PROFILE_PIC).getUrl()).fitCenter().circleCrop().into(ivProfilePic);
+        Glide.with(getContext()).load(user.getParseFile(Keys.KEY_PROFILE_PIC).getUrl()).fitCenter().circleCrop().into(ivProfilePic);
 
-        ivCamera.setOnClickListener(new View.OnClickListener(){
+        ivCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 launchCamera(); //take a photo
             }
         });
 
+        //change target language
         ivTarget.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
-                EditLangFragment editNameDialogFragment = EditLangFragment.newInstance(user.getString(KEY_TARGET_LANG));
+                EditLangFragment editNameDialogFragment = EditLangFragment.newInstance(user.getString(Keys.KEY_TARGET_LANG));
                 editNameDialogFragment.show(fm, "fragment_edit_lang");
             }
         });
 
-
+        //change current location
         final String finalLocation = location;
-
         ivLoc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
-                EditLocFragment editNameDialogFragment = null;
-                if(finalLocation.equals("")){
-                    editNameDialogFragment = EditLocFragment.newInstance("","");
-                }else{
+
+                EditLocFragment editLocFragment = null;
+                if (finalLocation.equals("")) {
+                    editLocFragment = EditLocFragment.newInstance("", "");
+                } else {
+                    //format: city, region
                     int commaIdx = finalLocation.indexOf(',');
                     String city = finalLocation.substring(0, commaIdx);
-                    String region = finalLocation.substring(commaIdx+2);
-                    editNameDialogFragment = EditLocFragment.newInstance(city, region);
+                    String region = finalLocation.substring(commaIdx + 2);
+                    editLocFragment = EditLocFragment.newInstance(city, region);
                 }
-                editNameDialogFragment.show(fm, "fragment_edit_lang");
+                editLocFragment.show(fm, "fragment_edit_loc");
             }
         });
 
     }
 
-    //FOR MATCHING CONVO BUDDIES IF USER HAD NO PREVIOUS PARTNER
-    private void convoBuddyNoPartner(final ParseUser userToPartner, final boolean flag){
+    // for matching convo buddies if there was no previous partner of concern
+    // userToPartner is the user we want to partner up with someone; flag is true if this user is the current user
+    // Note: if the user has the same native lang and target lang, they could get assigned to themselves
+    private void convoBuddyNoPartner(final ParseUser userToPartner, final boolean isCurUser) {
 
-            ParseQuery<ParseUser> query = new ParseQuery<ParseUser>(ParseUser.class);
-            query.addAscendingOrder("createdAt"); //oldest user at top
-            query.whereEqualTo(KEY_NATIVE_LANG, userToPartner.getString(KEY_TARGET_LANG)); //speaks correct language
-        // if the user has the same native lang and arget lang, they could get assigned themselves
+        ParseQuery<ParseUser> query = new ParseQuery<ParseUser>(ParseUser.class);
+        query.addAscendingOrder(Keys.KEY_CREATED); //oldest user at top
+        query.whereEqualTo(Keys.KEY_NATIVE_LANG, userToPartner.getString(Keys.KEY_TARGET_LANG)); //speaks correct language
+        query.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> objects, ParseException e) {
+                if (e == null) {
 
-            query.findInBackground(new FindCallback<ParseUser>() {
-                @Override
-                public void done(List<ParseUser> objects, ParseException e) {
-                    //check their convo objects and add users without a partner
-                    ArrayList<ParseUser> noPartner = new ArrayList<>();
-                    for(ParseUser candidate:objects){
-
+                    ArrayList<ParseUser> candidates = new ArrayList<>();
+                    for (ParseUser candidate : objects) {
                         //if the languages match both ways and they don't already have a partner
-                        if(candidate.getString(KEY_TARGET_LANG).equals(userToPartner.getString(KEY_NATIVE_LANG))){
-                            ConvoBuddy convo= (ConvoBuddy) candidate.getParseObject("convo");
-                            if(convo.getBuddy()==null){
-                                noPartner.add(candidate);
+                        //add to candidates list
+                        if (candidate.getString(Keys.KEY_TARGET_LANG).equals(userToPartner.getString(Keys.KEY_NATIVE_LANG))) {
+                            ConvoBuddy convo = (ConvoBuddy) candidate.getParseObject(Keys.KEY_CONVO);
+                            if (convo.getBuddy() == null) {
+                                candidates.add(candidate);
                             }
-
-                            //if(convo.getBuddy().getObjectId().equals(DEFAULT_ID)){
-                            // noPartner.add(candidate);}
                         }
                     }
 
-                    if(noPartner.size()==0){ //if no available ppl who speak the correct lang + are unpartnered
-                        ConvoBuddy convo= (ConvoBuddy) userToPartner.getParseObject("convo");
-                        //convo.putBuddy(defaultUser);
+                    if (candidates.size() == 0) { //if no available ppl who speak the correct lang + are unpartnered
+                        ConvoBuddy convo = (ConvoBuddy) userToPartner.getParseObject(Keys.KEY_CONVO);
                         convo.removeBuddy();
 
                         convo.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
-                                if(e == null){
-                                    if(flag){
+                                if (e == null) {
+                                    if (isCurUser) {
                                         tvConvoBuddy.setText(getContext().getString(R.string.coming_soon));
                                     }
-                                }else{
-                                    Log.e(TAG, "error ", e);
+                                } else {
+                                    Log.e(TAG, "error", e);
                                 }
                             }
                         });
 
-                    }else{ //if people available to be partners
-                        String location = userToPartner.getString("location");
-                        String birthday = userToPartner.getString("birthday");
+                    } else { //if people available to be partners
+                        String location = userToPartner.getString(Keys.KEY_LOC);
+                        String birthday = userToPartner.getString(Keys.KEY_BDAY);
 
                         ParseUser partner = null;
 
-                        if((location == null || location.length() == 0) && (birthday== null || birthday.length() == 0)) { //no FB account info at all
+                        if ((location == null || location.length() == 0) && (birthday == null || birthday.length() == 0)) { //no FB account info at all
                             //take the oldest partner that matches both ways in lang needs
-                            partner = noPartner.get(0);
+                            partner = candidates.get(0);
 
-                        }else if ((location == null || location.length() == 0) && !(birthday== null || birthday.length() == 0)){ //if we only have bday info
+                        } else if ((location == null || location.length() == 0) && !(birthday == null || birthday.length() == 0)) { //if we only have bday info
                             ArrayList<ConvoPartnerScore> scores = new ArrayList<ConvoPartnerScore>();
 
-                            for(ParseUser candidate:noPartner){
+                            for (ParseUser candidate : candidates) {
                                 int score = 0;
 
                                 int userYr = Integer.parseInt(birthday.substring(6));
-                                String candidateBday= candidate.getString("birthday");
+                                String candidateBday = candidate.getString(Keys.KEY_BDAY);
 
-                                if(candidateBday != null && candidateBday.length()!=0){
+                                if (candidateBday != null && candidateBday.length() != 0) {
                                     int candidateYr = Integer.parseInt(candidateBday.substring(6));
 
-                                    if(Math.abs(candidateYr - userYr) <= 5){
-                                        score ++;
+                                    if (Math.abs(candidateYr - userYr) <= 5) {
+                                        score++;
                                     }
                                 }
                                 scores.add(new ConvoPartnerScore(score, candidate));
                             }
 
                             Collections.sort(scores, new ConvoPartnerScoreComparator());
-                            partner = scores.get(0).getUser();
+                            partner = scores.get(0).getUser(); //take highest scoring user
 
-                        }else if(!(location == null || location.length() == 0) && (birthday== null || birthday.length() == 0)){ //only location info
-
+                        } else if (!(location == null || location.length() == 0) && (birthday == null || birthday.length() == 0)) { //only location info
                             ArrayList<ConvoPartnerScore> scores = new ArrayList<ConvoPartnerScore>();
 
-                            for(ParseUser candidate:noPartner){
+                            for (ParseUser candidate : candidates) {
                                 int score = 0;
 
                                 String locationRegion = location.substring(location.indexOf(",") + 2);
-                                String candidateLoc= candidate.getString("location");
+                                String candidateLoc = candidate.getString(Keys.KEY_LOC);
 
-                                if(candidateLoc != null && candidateLoc.length() != 0){
+                                if (candidateLoc != null && candidateLoc.length() != 0) {
                                     String candidateRegion = candidateLoc.substring(candidateLoc.indexOf(",") + 2);
-                                    if(candidateRegion.equals(locationRegion)){
-                                        score ++;
+                                    if (candidateRegion.equals(locationRegion)) {
+                                        score++;
                                     }
                                 }
                                 scores.add(new ConvoPartnerScore(score, candidate));
                             }
 
                             Collections.sort(scores, new ConvoPartnerScoreComparator());
-                            partner = scores.get(0).getUser();
+                            partner = scores.get(0).getUser(); //take highest scoring user
 
-                        }else{ //if we have both
+                        } else { //if we have both
                             ArrayList<ConvoPartnerScore> scores = new ArrayList<ConvoPartnerScore>();
 
-                            for(ParseUser candidate:noPartner){
+                            for (ParseUser candidate : candidates) {
                                 int score = 0;
 
                                 int userYr = Integer.parseInt(birthday.substring(6));
-                                String candidateBday= candidate.getString("birthday");
+                                String candidateBday = candidate.getString(Keys.KEY_BDAY);
 
-                                if(candidateBday != null && candidateBday.length()!=0){
+                                if (candidateBday != null && candidateBday.length() != 0) {
                                     int candidateYr = Integer.parseInt(candidateBday.substring(6));
 
-                                    if(Math.abs(candidateYr - userYr) <= 5){
-                                        score ++;
+                                    if (Math.abs(candidateYr - userYr) <= 5) {
+                                        score++;
                                     }
                                 }
 
                                 String locationRegion = location.substring(location.indexOf(",") + 2);
-                                String candidateLoc= candidate.getString("location");
+                                String candidateLoc = candidate.getString(Keys.KEY_LOC);
 
-                                if(candidateLoc != null && candidateLoc.length() != 0){
+                                if (candidateLoc != null && candidateLoc.length() != 0) {
                                     String candidateRegion = candidateLoc.substring(candidateLoc.indexOf(",") + 2);
-                                    if(candidateRegion.equals(locationRegion)){
-                                        score ++;
+                                    if (candidateRegion.equals(locationRegion)) {
+                                        score++;
                                     }
                                 }
 
@@ -368,32 +351,33 @@ public class ProfileFragment extends Fragment {
                             }
 
                             Collections.sort(scores, new ConvoPartnerScoreComparator());
-                            partner = scores.get(0).getUser();
+                            partner = scores.get(0).getUser(); //take highest scoring user
                         }
 
-                        // Update convo buddy of both A and the chosen partner
-                        ConvoBuddy convoPartner = (ConvoBuddy) partner.getParseObject("convo");
+                        // Update convo buddy of userToPartner and the chosen partner
+                        ConvoBuddy convoPartner = (ConvoBuddy) partner.getParseObject(Keys.KEY_CONVO);
                         convoPartner.putBuddy(userToPartner);
                         convoPartner.saveInBackground();
 
-                        ConvoBuddy convoUser = (ConvoBuddy) userToPartner.getParseObject("convo");
+                        ConvoBuddy convoUser = (ConvoBuddy) userToPartner.getParseObject(Keys.KEY_CONVO);
                         convoUser.putBuddy(partner);
                         final ParseUser finalPartner = partner;
                         convoUser.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
-                                if (e == null && flag) {
-                                    Email email = (Email) finalPartner.getParseObject("emailObject"); //email of partner
-                                    tvConvoBuddy.setText(finalPartner.getString(KEY_NAME) + " (" + email.getEmail() +")"); //set text
+                                if (e == null && isCurUser) {
+                                    Email email = (Email) finalPartner.getParseObject(Keys.KEY_EMAIL_OB); //email of partner
+                                    tvConvoBuddy.setText(finalPartner.getString(Keys.KEY_NAME) + " (" + email.getEmail() + ")"); //set text
                                 }
                             }
                         });
                     }
                 }
-            });
+            }
+        });
     }
 
-    public void launchCamera(){
+    public void launchCamera() {
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Create a File reference for future access
@@ -401,7 +385,6 @@ public class ProfileFragment extends Fragment {
 
         // wrap File object into a content provider
         // required for API >= 24
-        // See https://guides.codepath.com/android/Sharing-Content-with-Intents#sharing-files-with-api-24-or-higher
         Uri fileProvider = FileProvider.getUriForFile(getContext(), "com.fileprovider", photoFile);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider);
 
@@ -421,7 +404,7 @@ public class ProfileFragment extends Fragment {
         File mediaStorageDir = new File(getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), TAG);
 
         // Create the storage directory if it does not exist
-        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
+        if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()) {
             Log.d(TAG, "failed to create directory");
         }
 
@@ -448,18 +431,16 @@ public class ProfileFragment extends Fragment {
     }
 
     //saves profile picture to Parse user
-    private void sendPost(ParseUser user, File photo){
-        user.put(KEY_PROFILE_PIC, new ParseFile(photo));
+    private void sendPost(ParseUser user, File photo) {
+        user.put(Keys.KEY_PROFILE_PIC, new ParseFile(photo));
         user.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-                if (e != null){
+                if (e != null) {
                     Log.e(TAG, "done: error while saving", e);
                     Toast.makeText(getContext(), getContext().getString(R.string.save_error), Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
-
-
 }

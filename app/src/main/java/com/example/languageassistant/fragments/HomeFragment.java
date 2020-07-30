@@ -8,11 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import com.example.languageassistant.Keys;
 import com.example.languageassistant.R;
 import com.example.languageassistant.models.Prompt;
 import com.example.languageassistant.models.Response;
@@ -36,7 +38,6 @@ public class HomeFragment extends Fragment {
         public void onPromptSelected(String string);
     }
 
-    public static final String KEY_DAY_OF_YEAR = "dayOfTheYear";
     private OnItemSelectedListener listener;
 
     LinearLayout rlPrompts;
@@ -74,11 +75,10 @@ public class HomeFragment extends Fragment {
         }
     }
 
-
     @Override
     public void onViewCreated(@NonNull View view, @NonNull Bundle savedInstanceState){
         final String[] prompts = new String[3]; //storing the three prompts
-        final boolean[] flags = new boolean[3]; //storing if each prompt is still open for response
+        final boolean[] flags = new boolean[3]; //storing if each prompt is still open for a response
 
         rlPrompts = view.findViewById(R.id.rlPrompts);
         mcvContainer1 = view.findViewById(R.id.mcvContainer1);
@@ -93,7 +93,7 @@ public class HomeFragment extends Fragment {
 
         ParseQuery<Prompt> query = ParseQuery.getQuery(Prompt.class);
         query.setLimit(3);
-        query.whereEqualTo(KEY_DAY_OF_YEAR, dayOfYear);
+        query.whereEqualTo(Keys.KEY_DAY_OF_YEAR, dayOfYear); //get today's prompts
         query.findInBackground(new FindCallback<Prompt>() {
             public void done(List<Prompt> objects, ParseException e) {
                 if(e==null){
@@ -113,13 +113,12 @@ public class HomeFragment extends Fragment {
                         ParseQuery<Response> queryResponded = ParseQuery.getQuery(Response.class);
                         String today = (new Date()).toString();
                         String formattedToday = today.substring(4, 11) + today.substring(24);
-                        queryResponded.whereEqualTo(Response.KEY_DATE, formattedToday);
-                        queryResponded.whereEqualTo(Response.KEY_RESPONDER, ParseUser.getCurrentUser());
+                        queryResponded.whereEqualTo(Keys.KEY_DATE, formattedToday);
+                        queryResponded.whereEqualTo(Keys.KEY_RESPONDER, ParseUser.getCurrentUser());
                         queryResponded.findInBackground(new FindCallback<Response>() {
                             public void done(List<Response> objects, ParseException e) {
                                 if(e==null){
                                     if(objects.size() != 0 && objects.size() <= 3){ //if user has responded
-
                                         //for each response
                                         for(Response r: objects){
                                             String curPrompt = r.getPrompt();
@@ -171,12 +170,13 @@ public class HomeFragment extends Fragment {
                                         }
                                     });
                                 }else{
-                                    //say something's wrong, please restart app
+                                    Toast.makeText(getContext(), "Something went wrong. Please restart app.", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
                     }catch(IndexOutOfBoundsException exception){
                         //display a screen that says please restart app or something like that
+                        Toast.makeText(getContext(), "Something went wrong. Please restart app.", Toast.LENGTH_SHORT).show();
                     }
                 }
             }

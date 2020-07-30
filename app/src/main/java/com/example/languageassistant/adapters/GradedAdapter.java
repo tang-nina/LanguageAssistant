@@ -43,7 +43,6 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
        Response response = responses.get(position);
        holder.bind(response);
-
     }
 
     @Override
@@ -76,7 +75,7 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
         TextView tvNoGrade;
         TextView tvScore;
         TextView tvFeedback;
-        MaterialCardView mcvContainer;
+        MaterialCardView mcvContainer; //container card for each response
 
         //audio related UI elements
         ImageView ivPlay;
@@ -100,20 +99,23 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
         }
 
         public void bind(final Response response) {
+            tvPrompt.setText(response.getPrompt());
+            tvDate.setText(Response.getRelativeTimeAgo(response.getTimestamp().toString()));
 
             tvNoGrade.setVisibility(View.GONE);
             tvScore.setVisibility(View.GONE);
             tvFeedback.setVisibility(View.GONE);
 
+            //double tap toggles feedback + score visibility on and off
             mcvContainer.setOnTouchListener(new OnDoubleTapListener(itemView.getContext()) {
                 @Override
                 public void onDoubleTap(MotionEvent e) {
-
-
                     if(flag == false){
                         if(response.getGraded() == false){
+                            //no grade yet
                             tvNoGrade.setVisibility(View.VISIBLE);
                         }else{
+                            //there is grade and feedback
                             tvScore.setVisibility(View.VISIBLE);
                             tvFeedback.setVisibility(View.VISIBLE);
                             tvScore.setText(context.getString(R.string.score_label) + " " + response.getGrade());
@@ -136,39 +138,8 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
                 }
             });
 
-//            mcvContainer.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    if(flag == false){
-//                        if(response.getGraded() == false){
-//                            tvNoGrade.setVisibility(View.VISIBLE);
-//                        }else{
-//                            tvScore.setVisibility(View.VISIBLE);
-//                            tvFeedback.setVisibility(View.VISIBLE);
-//                            tvScore.setText(context.getString(R.string.score_label) + " " + response.getGrade());
-//
-//                            if(response.getComments().equals("")){
-//                                tvFeedback.setText(context.getString(R.string.no_add_comments));
-//                            }else{
-//                                tvFeedback.setText(context.getString(R.string.add_comments) + " " + response.getComments());
-//                            }
-//                        }
-//                        flag=true;
-//                    }else{
-//                        tvNoGrade.setVisibility(View.GONE);
-//                        tvScore.setVisibility(View.GONE);
-//                        tvFeedback.setVisibility(View.GONE);
-//
-//                        flag = false;
-//                    }
-//
-//                }
-//            });
-
-            tvPrompt.setText(response.getPrompt());
-            tvDate.setText(Response.getRelativeTimeAgo(response.getTimestamp().toString()));
-
-            if(response.getRecordedAnswer()!= null){//if the response was recorded
+            if(response.getRecordedAnswer()!= null){ //if the response was recorded
+                //set up music player
                 final MediaPlayer mediaPlayer = new MediaPlayer();
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 String url = response.getRecordedAnswer().getUrl();
@@ -202,10 +173,6 @@ public class GradedAdapter extends RecyclerView.Adapter<GradedAdapter.ViewHolder
                 tvPlaying.setVisibility(View.GONE);
                 tvResponse.setText(response.getWrittenAnswer());
             }
-
         }
-
     }
-
-
 }

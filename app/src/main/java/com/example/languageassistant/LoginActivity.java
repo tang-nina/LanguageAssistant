@@ -60,8 +60,8 @@ public class LoginActivity extends AppCompatActivity {
         ParseUser.logInInBackground(username, password, new LogInCallback() {
             @Override
             public void done(ParseUser user, ParseException e) {
-                if(e !=null){
-                    Toast.makeText(LoginActivity.this, "Login unsuccessful.", Toast.LENGTH_SHORT).show();
+                if(e != null){
+                    Toast.makeText(LoginActivity.this, getString(R.string.error_login), Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Issue with login.", e);
                     return;
                 }else{
@@ -82,6 +82,5 @@ public class LoginActivity extends AppCompatActivity {
     private void signUp(){
         Intent intent = new Intent(this, NewAccountActivity.class);
         startActivity(intent);
-        //finish();?
     }
 }
