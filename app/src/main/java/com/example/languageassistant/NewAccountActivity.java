@@ -58,6 +58,8 @@ public class NewAccountActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_account);
 
+        getSupportActionBar().setTitle("Create a New Account");
+
         etName = findViewById(R.id.etName);
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
@@ -240,6 +242,7 @@ public class NewAccountActivity extends AppCompatActivity {
                                                                                                                                             if (LoginManager.getInstance() != null) {
                                                                                                                                                 LoginManager.getInstance().logOut();
                                                                                                                                             }
+                                                                                                                                            getSupportActionBar().setTitle("LanguageAssistant");
                                                                                                                                             goToMainActivity();
 
                                                                                                                                         } else {
@@ -247,7 +250,7 @@ public class NewAccountActivity extends AppCompatActivity {
                                                                                                                                             if (LoginManager.getInstance() != null) {
                                                                                                                                                 LoginManager.getInstance().logOut();
                                                                                                                                             }
-
+                                                                                                                                            getSupportActionBar().setTitle("LanguageAssistant");
                                                                                                                                             goToMainActivity();
                                                                                                                                         }
                                                                                                                                     }
@@ -260,7 +263,7 @@ public class NewAccountActivity extends AppCompatActivity {
                                                                                                                             if (LoginManager.getInstance() != null) {
                                                                                                                                 LoginManager.getInstance().logOut();
                                                                                                                             }
-
+                                                                                                                            getSupportActionBar().setTitle("LanguageAssistant");
                                                                                                                             goToMainActivity();
                                                                                                                         }
                                                                                                                     }

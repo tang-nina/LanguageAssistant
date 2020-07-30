@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     tools:context=".fragments.HomeFragment">
 
     <LinearLayout
@@ -21,17 +22,18 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/mcvContainer1"
-            android:transitionName="prompt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="#FFFFFF"
+            android:transitionName="prompt"
             app:cardBackgroundColor="#ffffff"
             app:cardCornerRadius="12dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_margin="8dp">
 
                 <TextView
                     android:id="@+id/tvPrompt1"
@@ -43,7 +45,9 @@
                     android:layout_marginEnd="4dp"
                     android:layout_marginBottom="4dp"
                     android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="24sp"
                     tools:text="Prompt 1 will go here." />
             </RelativeLayout>
 
@@ -54,13 +58,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:transitionName="prompt"
             android:layout_weight="1"
+            android:transitionName="prompt"
             app:cardCornerRadius="12dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_margin="8dp">
 
                 <TextView
                     android:id="@+id/tvPrompt2"
@@ -72,7 +77,9 @@
                     android:layout_marginEnd="4dp"
                     android:layout_marginBottom="4dp"
                     android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="24sp"
                     tools:text="Prompt 2 will go here." />
             </RelativeLayout>
 
@@ -89,7 +96,8 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_margin="8dp">
 
                 <TextView
                     android:id="@+id/tvPrompt3"
@@ -101,7 +109,9 @@
                     android:layout_marginEnd="4dp"
                     android:layout_marginBottom="4dp"
                     android:gravity="center"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="24sp"
                     tools:text="Prompt 3 will go here." />
             </RelativeLayout>
 

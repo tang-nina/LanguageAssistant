@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">LanguageAssistant</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="play_recording">Play recording:</string>
     <string name="score_label">Score:</string>
@@ -31,9 +30,10 @@
     <string name="playing">playing</string>
     <string name="no_recording">You did not record anything yet.</string>
     <string name="response_submitted">Response submitted!</string>
-    <string name="welcome">Welcome to the Language Assistant!</string>
+    <string name="welcome">Welcome to the \nLanguage Assistant!</string>
+    <string name="explain">The Language Assistant lets users practice writing and speaking skills in a language of their choice, and receive feedback from peers.</string>
     <string name="log_in">Log in</string>
-    <string name="sign_up">Sign up</string>
+    <string name="sign_up">Click here.</string>
     <string name="no_account">Don\'t have an account?</string>
     <string name="none_to_grade">You have no responses you need to grade right now.</string>
     <string name="none_graded">You have no responses currently. \nGo to the home page to respond to a prompt. </string>
@@ -42,8 +42,8 @@
     <string name="link">Link</string>
     <string name="fb_instruc">Link your Facebook account for a better conversation buddy \nrecommendation. We will use your location and birthday.</string>
     <string name="submit">Submit</string>
-    <string name="write_response">Write a response:</string>
-    <string name="record_response">Or record a response: \nOne minute maximum.</string>
+    <string name="write_response">Write your response here:</string>
+    <string name="record_response">Record your response:</string>
     <string name="feedback">Please give your feedback on this response.</string>
     <string name="any_add_comments">Any additional comments?</string>
     <string name="not_graded">Not graded yet.</string>
@@ -60,4 +60,6 @@
     <string name="valid_email">Please enter a valid email (example@example.com).</string>
     <string name="username_repeat">This username is already in use. Please choose another one.</string>
     <string name="new_acc_error">Something went wrong. Please check your info and try again.</string>
+    <string name="facebook_app_id">291329435621536</string>
+    <string name="fb_login_protocol_scheme">fb291329435621536</string>
 </resources>

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     tools:context=".fragments.GradingFragment">
 
     <TextView
@@ -12,6 +13,7 @@
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:text="@string/none_to_grade"
+        android:textColor="@color/colorPrimaryDark"
         android:visibility="visible" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

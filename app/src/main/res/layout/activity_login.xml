@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     tools:context=".LoginActivity">
 
     <TextView
@@ -12,45 +13,33 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="106dp"
-        android:text="@string/welcome" />
-
-    <TextView
-        android:id="@+id/tvSignUpMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="438dp"
-        android:text="@string/no_account" />
+        android:layout_marginTop="48dp"
+        android:gravity="center"
+        android:text="@string/welcome"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textColor="@color/colorPrimary"
+        android:textSize="28sp" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSignIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="333dp"
-        android:text="@string/log_in" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnSignUp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/tilPassword"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="469dp"
-        android:text="@string/sign_up" />
+        android:layout_marginTop="32dp"
+        android:background="#FFFFFF"
+        android:text="@string/log_in" />
 
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/tvExplain"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="160dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
         android:hint="@string/username1">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -67,9 +56,10 @@
         android:id="@+id/tilPassword"
         android:layout_width="426dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="220dp"
-        android:layout_marginEnd="4dp"
+        android:layout_below="@+id/tilUsername"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="8dp"
         android:hint="@string/password">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -78,5 +68,43 @@
             android:layout_height="wrap_content"
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/tvExplain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvIntro"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="12dp"
+        android:gravity="center"
+        android:text="@string/explain"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
+
+    <RelativeLayout
+        android:id="@+id/rlNewUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnSignIn"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:id="@+id/tvSignUpMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:text="@string/no_account" />
+
+        <TextView
+            android:id="@+id/tvSignUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/tvSignUpMessage"
+            android:layout_marginStart="4dp"
+            android:layout_toEndOf="@+id/tvSignUpMessage"
+            android:text="@string/sign_up"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold" />
+    </RelativeLayout>
 
 </RelativeLayout>

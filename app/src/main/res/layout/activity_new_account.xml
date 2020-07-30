@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:background="@color/background"
     android:fillViewport="false"
     android:orientation="vertical">
 
@@ -13,14 +14,6 @@
         android:layout_height="match_parent"
         android:layout_margin="8dp"
         tools:context=".NewAccountActivity">
-
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="Create a New Account"
-            android:textSize="18sp" />
 
         <RelativeLayout
             android:id="@+id/rlEmail"
@@ -108,9 +101,9 @@
             android:id="@+id/rlName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tvTitle"
+            android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="20dp">
 
             <TextView
                 android:id="@+id/tvNameLabel"

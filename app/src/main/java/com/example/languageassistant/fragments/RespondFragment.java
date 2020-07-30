@@ -30,6 +30,7 @@ import com.example.languageassistant.models.GradingScore;
 import com.example.languageassistant.models.Response;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -67,12 +68,17 @@ public class RespondFragment extends Fragment {
     private OnItemSelectedListener listener;
     private String prompt;
     TextView tvPrompt;
+    TextInputLayout tilResponse;
     TextInputEditText tietResponse;
+    TextView tvWriteHeader;
     MaterialButton btnSubmit;
+    MaterialButton btnWrite;
+    MaterialButton btnRecord;
 
     //audio related
     ImageView ivRecord;
     ImageView ivPlay;
+    RelativeLayout rlRecording;
     RelativeLayout rlPlay;
     MaterialButton btnSubmitRecording;
     TextView tvRecordInstructions;
@@ -121,17 +127,68 @@ public class RespondFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @NonNull Bundle savedInstanceState) {
         tvPrompt = view.findViewById(R.id.tvPrompt);
         tietResponse = view.findViewById(R.id.tietResponse);
+        tilResponse = view.findViewById(R.id.tilResponse);
         btnSubmit = view.findViewById(R.id.btnSubmit);
+        btnWrite = view.findViewById(R.id.btnWrite);
+        btnRecord = view.findViewById(R.id.btnRespond);
+        tvWriteHeader = view.findViewById(R.id.tvWriteHeader);
 
         ivRecord = view.findViewById(R.id.ivStart);
         ivPlay = view.findViewById(R.id.ivPlay);
         rlPlay = view.findViewById(R.id.rlPlay);
+        rlRecording = view.findViewById(R.id.rlRecording);
         btnSubmitRecording = view.findViewById(R.id.btnSubmitRecording);
         tvPlayInstructions = view.findViewById(R.id.tvPlayInstructions);
         tvRecordInstructions = view.findViewById(R.id.tvRecordInstructions);
 
         tvPrompt.setText(prompt);
         mFileName = getFileUri("audiorecordtest.3gp");
+
+        //default open writing option
+       btnRecord.setBackgroundColor(getResources().getColor(R.color.background2));
+//        btnWrite.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+//        btnRecord.setBackgroundColor(getResources().getColor(R.color.light_pink));
+        rlRecording.setVisibility(View.GONE);
+
+        btnRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                btnRecord.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                btnWrite.setBackgroundColor(getResources().getColor(R.color.background2));
+
+//                btnRecord.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+//                btnWrite.setBackgroundColor(getResources().getColor(R.color.light_pink));
+
+                //make recording visible
+                rlRecording.setVisibility(View.VISIBLE);
+
+                //make writing invisible
+                tilResponse.setVisibility(View.GONE);
+                tvWriteHeader.setVisibility(View.GONE);
+                btnSubmit.setVisibility(View.GONE);
+            }
+        });
+
+        btnWrite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                btnRecord.setBackgroundColor(getResources().getColor(R.color.background2));
+                btnWrite.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+
+//                btnRecord.setBackgroundColor(getResources().getColor(R.color.light_pink));
+//                btnWrite.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+
+                //make recording invisible
+                rlRecording.setVisibility(View.GONE);
+                rlPlay.setVisibility(View.GONE);
+                btnSubmitRecording.setVisibility(View.GONE);
+
+                //make writing visible
+                tilResponse.setVisibility(View.VISIBLE);
+                tvWriteHeader.setVisibility(View.VISIBLE);
+                btnSubmit.setVisibility(View.VISIBLE);
+            }
+        });
 
         //submit the written response
         btnSubmit.setOnClickListener(new View.OnClickListener() {

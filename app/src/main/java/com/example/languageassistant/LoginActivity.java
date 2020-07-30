@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,7 +19,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
 
     Button btnLogin;
-    Button btnSignUp;
+    TextView tvSignUp;
     EditText etUsername;
     EditText etPassword;
 
@@ -34,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btnSignIn);
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
-        btnSignUp = findViewById(R.id.btnSignUp);
+        tvSignUp = findViewById(R.id.tvSignUp);
 
         //login
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -48,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         //signup
-        btnSignUp.setOnClickListener(new View.OnClickListener() {
+        tvSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 signUp();

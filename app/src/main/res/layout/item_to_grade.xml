@@ -12,18 +12,18 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="false"
-        android:layout_margin="4dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_margin="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
         app:cardCornerRadius="12dp">
 
         <RelativeLayout
             android:id="@+id/rlInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp">
+            android:layout_margin="8dp">
 
             <TextView
                 android:id="@+id/tvPrompt"
@@ -31,16 +31,17 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_toStartOf="@+id/tvDate"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                android:textColor="@color/colorPrimary"
                 tools:text="A prompt here." />
 
             <TextView
                 android:id="@+id/tvDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
+                android:layout_alignBottom="@id/btnSubmit"
+                android:layout_alignParentStart="true"
+                android:layout_marginBottom="4dp"
                 tools:text="00/00/0000" />
 
             <TextView
@@ -49,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvPrompt"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 tools:text="a written response" />
 
@@ -61,6 +62,7 @@
                 android:layout_alignParentStart="false"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="9dp"
+                android:backgroundTint="#FFFFFF"
                 android:numStars="5"
                 android:saveEnabled="true"
                 android:stepSize="1.0" />
@@ -70,7 +72,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvResponse"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/feedback"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 android:textSize="14sp" />
@@ -91,7 +93,7 @@
                 android:layout_below="@+id/rbRating"
                 android:layout_alignParentStart="false"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:hint="@string/any_add_comments"
                 app:counterEnabled="true"
                 app:counterMaxLength="500">
@@ -99,7 +101,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/tietComments"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:background="@color/background" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <ImageView
@@ -108,7 +111,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvPrompt"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="14dp"
+                android:layout_marginTop="11dp"
                 android:layout_toEndOf="@+id/tvResponse"
                 android:tag="play_button"
                 app:srcCompat="@drawable/ic_baseline_play_circle_outline_24"
