@@ -439,6 +439,8 @@ public class ProfileFragment extends Fragment {
                 if (e != null) {
                     Log.e(TAG, "done: error while saving", e);
                     Toast.makeText(getContext(), getContext().getString(R.string.save_error), Toast.LENGTH_SHORT).show();
+                }else{
+                    Glide.with(getContext()).load(ParseUser.getCurrentUser().getParseFile(Keys.KEY_PROFILE_PIC).getUrl()).fitCenter().circleCrop().into(ivProfilePic);
                 }
             }
         });

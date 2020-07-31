@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -24,6 +23,7 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
@@ -39,12 +39,12 @@ import java.util.List;
 
 public class NewAccountActivity extends AppCompatActivity {
 
-    EditText etName;
-    EditText etUsername;
-    EditText etPassword;
-    EditText etEmail;
-    EditText etNativeLang;
-    EditText etTargetLang;
+    TextInputEditText tietName;
+    TextInputEditText tietUsername;
+    TextInputEditText tietPassword;
+    TextInputEditText tietEmail;
+    TextInputEditText tietNativeLang;
+    TextInputEditText tietTargetLang;
     MaterialButton btnSubmit;
 
     //FB login + SDK
@@ -60,20 +60,20 @@ public class NewAccountActivity extends AppCompatActivity {
 
         getSupportActionBar().setTitle("Create a New Account");
 
-        etName = findViewById(R.id.etName);
-        etUsername = findViewById(R.id.etUsername);
-        etPassword = findViewById(R.id.etPassword);
-        etEmail = findViewById(R.id.etEmail);
-        etNativeLang = findViewById(R.id.etNative);
-        etTargetLang = findViewById(R.id.etTarget);
+        tietName = findViewById(R.id.tietName);
+        tietUsername = findViewById(R.id.tietUsername);
+        tietPassword = findViewById(R.id.tietPassword);
+        tietEmail = findViewById(R.id.tietEmail);
+        tietNativeLang = findViewById(R.id.tietNative);
+        tietTargetLang = findViewById(R.id.tietTarget);
 
         btnSubmit = findViewById(R.id.btnSubmit);
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if (etName.getText().toString().trim().length() == 0 || etUsername.getText().toString().trim().length() == 0 || etPassword.getText().toString().trim().length() == 0 ||
-                        etNativeLang.getText().toString().trim().length() == 0 || etTargetLang.getText().toString().trim().length() == 0 || etEmail.getText().toString().trim().length() == 0) {
+                if (tietName.getText().toString().trim().length() == 0 || tietUsername.getText().toString().trim().length() == 0 || tietPassword.getText().toString().trim().length() == 0 ||
+                        tietNativeLang.getText().toString().trim().length() == 0 || tietTargetLang.getText().toString().trim().length() == 0 || tietEmail.getText().toString().trim().length() == 0) {
 
                     //alert user if missing info
                     AlertDialog.Builder builder = new AlertDialog.Builder(NewAccountActivity.this);
@@ -88,7 +88,7 @@ public class NewAccountActivity extends AppCompatActivity {
                     AlertDialog dialog = builder.create();
                     dialog.show();
 
-                } else if (!isEmailValid(etEmail.getText().toString())) {
+                } else if (!isEmailValid(tietEmail.getText().toString())) {
 
                     //alert user of wrong email format
                     AlertDialog.Builder builder = new AlertDialog.Builder(NewAccountActivity.this);
@@ -105,7 +105,7 @@ public class NewAccountActivity extends AppCompatActivity {
 
                 } else {
                     ParseQuery<ParseUser> query = ParseQuery.getQuery(ParseUser.class);
-                    query.whereEqualTo(Keys.KEY_USERNAME, etUsername.getText().toString());
+                    query.whereEqualTo(Keys.KEY_USERNAME, tietUsername.getText().toString());
                     query.findInBackground(new FindCallback<ParseUser>() {
                         public void done(List<ParseUser> objects, ParseException e) {
                             if (e == null) {
@@ -127,12 +127,12 @@ public class NewAccountActivity extends AppCompatActivity {
                                     //if all info is filled out, create new user
 
                                     ParseUser user = new ParseUser();
-                                    user.setUsername(etUsername.getText().toString());
-                                    user.setPassword(etPassword.getText().toString());
+                                    user.setUsername(tietUsername.getText().toString());
+                                    user.setPassword(tietPassword.getText().toString());
 
-                                    user.put(Keys.KEY_NATIVE_LANG, etNativeLang.getText().toString());
-                                    user.put(Keys.KEY_TARGET_LANG, etTargetLang.getText().toString());
-                                    user.put(Keys.KEY_NAME, etName.getText().toString());
+                                    user.put(Keys.KEY_NATIVE_LANG, tietNativeLang.getText().toString());
+                                    user.put(Keys.KEY_TARGET_LANG, tietTargetLang.getText().toString());
+                                    user.put(Keys.KEY_NAME, tietName.getText().toString());
 
                                     if (AccessToken.getCurrentAccessToken() != null) {
                                         //only update if the user stays logged in to FB account
@@ -166,7 +166,7 @@ public class NewAccountActivity extends AppCompatActivity {
                                                                         //create matching email object
                                                                         final Email email = new Email();
                                                                         email.putUser(ParseUser.getCurrentUser());
-                                                                        email.putEmail(etEmail.getText().toString());
+                                                                        email.putEmail(tietEmail.getText().toString());
 
                                                                         email.saveInBackground(new SaveCallback() {
                                                                             @Override
@@ -200,7 +200,7 @@ public class NewAccountActivity extends AppCompatActivity {
                                                                                                                         if (responses.size() != 0) { //if there are (responses is the list that DEFAULT user must grade)
 
                                                                                                                             ParseQuery<ParseUser> queryUser = ParseQuery.getQuery(ParseUser.class);
-                                                                                                                            queryUser.whereEqualTo(Keys.KEY_TARGET_LANG, etNativeLang.getText().toString());
+                                                                                                                            queryUser.whereEqualTo(Keys.KEY_TARGET_LANG, tietNativeLang.getText().toString());
                                                                                                                             queryUser.findInBackground(new FindCallback<ParseUser>() {
                                                                                                                                 @Override
                                                                                                                                 public void done(List<ParseUser> users, ParseException e) { //users is the list of all users whose responses this user can grade

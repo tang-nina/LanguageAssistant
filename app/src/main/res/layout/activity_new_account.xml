@@ -1,203 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@color/background"
     android:fillViewport="false"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".NewAccountActivity">
+
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="8dp"
-        tools:context=".NewAccountActivity">
+        android:layout_margin="12dp">
 
-        <RelativeLayout
-            android:id="@+id/rlEmail"
+        <TextView
+            android:id="@+id/tvBasicInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvInstructions"
+            android:layout_alignParentStart="false"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="12dp"
+            android:text="Basic Information"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textColor="@color/colorPrimary" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilName"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvBasicInfo"
+            android:layout_marginTop="8dp"
+            android:hint="Name">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tietName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilUsername"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tilName"
+            android:layout_marginTop="4dp"
+            android:hint="Username">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tietUsername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilPassword"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tilUsername"
+            android:layout_marginTop="4dp"
+            android:hint="Password">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tietPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text|textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilEmail"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tilPassword"
+            android:layout_marginTop="4dp"
+            android:hint="Email">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tietEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/tvLanguageInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/rlPassword"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="12dp">
+            android:layout_below="@id/tilEmail"
+            android:layout_marginTop="24dp"
+            android:text="Language Information"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textColor="@color/colorPrimary" />
 
-            <TextView
-                android:id="@+id/tvEmailLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Email:"
-                android:textSize="24sp" />
-
-            <EditText
-                android:id="@+id/etEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_toEndOf="@+id/tvEmailLabel"
-                android:ems="10"
-                android:inputType="none|textEmailAddress"
-                android:textSize="14sp" />
-
-        </RelativeLayout>
-
-
-        <RelativeLayout
-            android:id="@+id/rlPassword"
+        <TextView
+            android:id="@+id/tvNativeLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/rlUsername"
+            android:layout_below="@id/tvLanguageInfo"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="8dp"
+            android:text="Please enter your native language or the language you are most comfortable in. You will grade other responses in this language."
+            android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/tvPasswordLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Password:"
-                android:textSize="24sp" />
 
-            <EditText
-                android:id="@+id/etPassword"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_toEndOf="@+id/tvPasswordLabel"
-                android:ems="10"
-                android:inputType="textPassword"
-                android:textSize="14sp" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/rlUsername"
-            android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilNative"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/rlName"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="12dp">
+            android:layout_below="@+id/tvNativeLabel"
+            android:layout_marginTop="4dp">
 
-            <TextView
-                android:id="@+id/tvUsernameLabel"
-                android:layout_width="wrap_content"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tietNative"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Username:"
-                android:textSize="24sp" />
-
-            <EditText
-                android:id="@+id/etUsername"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_toEndOf="@+id/tvUsernameLabel"
-                android:ems="10"
-                android:inputType="text"
-                android:textSize="14sp" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/rlName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp">
-
-            <TextView
-                android:id="@+id/tvNameLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Name:"
-                android:textSize="24sp" />
-
-            <EditText
-                android:id="@+id/etName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_toEndOf="@+id/tvNameLabel"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:textSize="14sp" />
-
-        </RelativeLayout>
-
-
-        <RelativeLayout
-            android:id="@+id/rlNative"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/rlEmail"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp">
-
-            <TextView
-                android:id="@+id/tvNativeLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:gravity="center"
-                android:text="Please enter your native language or the language you are most comfortable in. \nYou will grade other user responses in this language."
-                android:textSize="18sp" />
-
-            <EditText
-                android:id="@+id/etNative"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tvNativeLabel"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="12dp"
-                android:ems="16"
                 android:hint="Example: English"
-                android:inputType="none|text"
-                android:textSize="14sp" />
-
-        </RelativeLayout>
+                android:inputType="textCapWords" />
+        </com.google.android.material.textfield.TextInputLayout>
 
 
-        <RelativeLayout
-            android:id="@+id/rlTarget"
+        <TextView
+            android:id="@+id/tvTargetLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/rlNative"
+            android:layout_below="@id/tilNative"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp">
+            android:layout_marginTop="16dp"
+            android:text="Please enter the language you want to practice. You will respond to prompts in this language."
+            android:textSize="16sp" />
 
-            <TextView
-                android:id="@+id/tvTargetLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:gravity="center"
-                android:text="Please enter the language you want to practice. \nYou will respond to prompts in this language."
-                android:textSize="18sp" />
 
-            <EditText
-                android:id="@+id/etTarget"
-                android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilTarget"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvTargetLabel"
+            android:layout_marginTop="4dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tietTarget"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvTargetLabel"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="12dp"
-                android:ems="16"
                 android:hint="Example: Chinese"
-                android:inputType="text"
-                android:textSize="14sp" />
+                android:inputType="textCapWords" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        </RelativeLayout>
+        <TextView
+            android:id="@+id/tvFbHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tilTarget"
+            android:layout_marginTop="24dp"
+            android:text="Link your Facebook account (optional)"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textColor="@color/colorPrimary" />
+
+        <TextView
+            android:id="@+id/tvInstructions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="All fields are required except for the Facebook account portion. "
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/tvFbInfo"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/rlTarget"
+            android:layout_below="@+id/tvFbHeader"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
+            android:layout_marginTop="8dp"
             android:text="@string/fb_instruc"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
+            android:textSize="16sp" />
 
         <com.facebook.login.widget.LoginButton
             android:id="@+id/btnLogin"
@@ -207,20 +192,17 @@
             android:layout_alignParentStart="false"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="12dp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSubmit"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/btnLogin"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="40dp"
             android:text="Submit" />
 
-
     </RelativeLayout>
-
 </ScrollView>

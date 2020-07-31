@@ -40,7 +40,7 @@
     <string name="logout">Log out </string>
     <string name="rec_buddy">Recommended Conversation Buddy</string>
     <string name="link">Link</string>
-    <string name="fb_instruc">Link your Facebook account for a better conversation buddy \nrecommendation. We will use your location and birthday.</string>
+    <string name="fb_instruc">Link your Facebook account for a better conversation buddy recommendation. We will use your location and birthday.</string>
     <string name="submit">Submit</string>
     <string name="write_response">Write your response here:</string>
     <string name="record_response">Record your response:</string>

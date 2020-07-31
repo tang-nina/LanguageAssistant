@@ -22,25 +22,33 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSignIn"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tilPassword"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="12dp"
         android:background="#FFFFFF"
-        android:text="@string/log_in" />
+        android:text="@string/log_in"
+        app:cornerRadius="8dp" />
 
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilUsername"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvExplain"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="8dp"
-        android:hint="@string/username1">
+        android:layout_marginEnd="12dp"
+        android:hint="@string/username1"
+        app:boxCornerRadiusBottomEnd="8dp"
+        app:boxCornerRadiusBottomStart="8dp"
+        app:boxCornerRadiusTopEnd="8dp"
+        app:boxCornerRadiusTopStart="8dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etUsername"
@@ -49,18 +57,23 @@
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="0dp"
             android:inputType="text"
-            android:maxLines="1" />
+            android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilPassword"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="426dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tilUsername"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="8dp"
-        android:hint="@string/password">
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="12dp"
+        android:hint="@string/password"
+        app:boxCornerRadiusBottomEnd="8dp"
+        app:boxCornerRadiusBottomStart="8dp"
+        app:boxCornerRadiusTopEnd="8dp"
+        app:boxCornerRadiusTopStart="8dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPassword"
@@ -71,7 +84,7 @@
 
     <TextView
         android:id="@+id/tvExplain"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvIntro"
         android:layout_marginStart="12dp"
@@ -79,20 +92,22 @@
         android:layout_marginEnd="12dp"
         android:gravity="center"
         android:text="@string/explain"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
+        android:textSize="16sp" />
 
     <RelativeLayout
         android:id="@+id/rlNewUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnSignIn"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp">
 
         <TextView
             android:id="@+id/tvSignUpMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
             android:text="@string/no_account" />
 
         <TextView

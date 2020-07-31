@@ -33,7 +33,7 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
+                android:layout_marginStart="20dp"
                 android:layout_toEndOf="@+id/ivProfilePic">
 
                 <com.google.android.material.button.MaterialButton
@@ -74,7 +74,7 @@
                 android:layout_marginEnd="-5dp"
                 android:layout_marginBottom="-5dp"
                 android:src="@drawable/camera_shadow_fill"
-                android:tint="#FFFFFF" />
+                android:tint="@color/colorPrimaryDark" />
 
         </RelativeLayout>
 
@@ -84,7 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/rlProfileTop"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
             tools:text="Native Language (for grading): " />
 

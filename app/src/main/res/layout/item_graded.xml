@@ -85,7 +85,8 @@
         android:layout_below="@+id/mcvContainer"
         android:layout_alignParentStart="true"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/not_graded"
         android:visibility="gone" />
 
@@ -96,7 +97,7 @@
         android:layout_below="@+id/tvNoGrade"
         android:layout_alignParentStart="true"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="4dp"
         android:visibility="gone"
         tools:text="Score: 4" />
 
@@ -107,7 +108,8 @@
         android:layout_below="@+id/tvScore"
         android:layout_alignParentStart="true"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp"
         android:visibility="gone"
         tools:text="Additional Feedback: " />
 
