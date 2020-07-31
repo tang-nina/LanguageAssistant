@@ -30,4 +30,5 @@ public class Keys {
     public static final String KEY_PROMPT_TEXT = "text";
     public static final String KEY_PROFILE_PIC = "profilePic";
     public static final String KEY_DAY_OF_YEAR = "dayOfTheYear";
+    public static final String KEY_DEFAULT_ID = "bzXsc2C7xO";
 }

@@ -54,15 +54,14 @@
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 tools:text="a written response" />
 
-            <RatingBar
+            <me.zhanghai.android.materialratingbar.MaterialRatingBar
                 android:id="@+id/rbRating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvGradingHeader"
                 android:layout_alignParentStart="false"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="9dp"
-                android:backgroundTint="#FFFFFF"
+                android:layout_marginTop="8dp"
                 android:numStars="5"
                 android:saveEnabled="true"
                 android:stepSize="1.0" />
@@ -93,7 +92,7 @@
                 android:layout_below="@+id/rbRating"
                 android:layout_alignParentStart="false"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
                 android:hint="@string/any_add_comments"
                 app:counterEnabled="true"
                 app:counterMaxLength="500">

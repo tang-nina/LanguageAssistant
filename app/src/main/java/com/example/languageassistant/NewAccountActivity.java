@@ -184,7 +184,7 @@ public class NewAccountActivity extends AppCompatActivity {
 
                                                                                                 //check for any responses whose grader went unassigned
                                                                                                 ParseQuery<ParseUser> query = new ParseQuery<ParseUser>(ParseUser.class);
-                                                                                                query.whereEqualTo(Keys.KEY_ID, "JSYDmAKach");
+                                                                                                query.whereEqualTo(Keys.KEY_ID, Keys.KEY_DEFAULT_ID);
                                                                                                 query.findInBackground(new FindCallback<ParseUser>() {
                                                                                                     @Override
                                                                                                     public void done(List<ParseUser> objects, ParseException e) {
