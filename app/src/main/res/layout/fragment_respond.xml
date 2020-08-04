@@ -105,7 +105,15 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/btnSubmit"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="12dp">
+
+            <TextView
+                android:id="@+id/tvLimit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvRecord"
+                android:layout_marginTop="8dp"
+                android:text="Time limit: one minute" />
 
             <TextView
                 android:id="@+id/tvRecord"

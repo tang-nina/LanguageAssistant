@@ -161,22 +161,34 @@ public class ProfileFragment extends Fragment {
         //convo object of current user
         ConvoBuddy curConvo = (ConvoBuddy) user.getParseObject(Keys.KEY_CONVO);
 
-        if (reloaded == true) { //this is being loaded after updating a language
+        if (reloaded == true) { //this is being loaded after updating a language or location
+
+            //get info of previous partner
             ParseUser prevPartner = curConvo.getBuddy();
             String prevId = ""; //id of previous partner
             if (prevPartner != null) {
                 prevId = prevPartner.getObjectId();
             }
 
-            convoBuddyNoPartner(user, true); //assign a new buddy using new language
-
-            //if they had a previous buddy in the old language that was not themselves, we must reassign the new buddy too
+            //if they had a previous buddy in the old language that was not themselves, we make the prev partner available to be rematched
             if (!(prevPartner == null) && !(prevId.equals(user.getObjectId()))) {
-                convoBuddyNoPartner(prevPartner, false); //assign prev buddy a new partner
+                //make the previous partner null
+                ConvoBuddy convo = (ConvoBuddy) prevPartner.getParseObject(Keys.KEY_CONVO);
+                convo.removeBuddy();
             }
+
+            convoBuddyNoPartner(user, true, prevId); //assign a new buddy using new language
+
+            //get new partner of user
+            ParseUser newPartner = ((ConvoBuddy) user.getParseObject(Keys.KEY_CONVO)).getBuddy();
+            //if it is not the same as the old partner, reassign the old partner
+            if (!(prevPartner == null) && !(prevId.equals(user.getObjectId())) && (newPartner == null || newPartner.getObjectId().equals(prevId))) {
+                convoBuddyNoPartner(prevPartner, false, ""); //assign prev buddy a new partner
+            }
+
         } else { //this is being normally loaded
             if (curConvo.getBuddy() == null) { //if no partner
-                convoBuddyNoPartner(user, true); //try to assign one
+                convoBuddyNoPartner(user, true, ""); //try to assign one
             } else { //keep your partner
                 try {
                     Email email = (Email) curConvo.getBuddy().fetchIfNeeded().getParseObject("emailObject"); //email of partner
@@ -234,7 +246,7 @@ public class ProfileFragment extends Fragment {
     // for matching convo buddies if there was no previous partner of concern
     // userToPartner is the user we want to partner up with someone; flag is true if this user is the current user
     // Note: if the user has the same native lang and target lang, they could get assigned to themselves
-    private void convoBuddyNoPartner(final ParseUser userToPartner, final boolean isCurUser) {
+    private void convoBuddyNoPartner(final ParseUser userToPartner, final boolean isCurUser, final String specialUser) {
 
         ParseQuery<ParseUser> query = new ParseQuery<ParseUser>(ParseUser.class);
         query.addAscendingOrder(Keys.KEY_CREATED); //oldest user at top
@@ -251,6 +263,8 @@ public class ProfileFragment extends Fragment {
                         if (candidate.getString(Keys.KEY_TARGET_LANG).equals(userToPartner.getString(Keys.KEY_NATIVE_LANG))) {
                             ConvoBuddy convo = (ConvoBuddy) candidate.getParseObject(Keys.KEY_CONVO);
                             if (convo.getBuddy() == null) {
+                                candidates.add(candidate);
+                            }else if(candidate.getObjectId().equals(specialUser)){
                                 candidates.add(candidate);
                             }
                         }

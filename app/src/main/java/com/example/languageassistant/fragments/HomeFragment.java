@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +48,9 @@ public class HomeFragment extends Fragment {
     TextView tvPrompt1;
     TextView tvPrompt2;
     TextView tvPrompt3;
+    ImageView ivCompleted1;
+    ImageView ivCompleted2;
+    ImageView ivCompleted3;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -87,6 +91,13 @@ public class HomeFragment extends Fragment {
         tvPrompt1 = view.findViewById(R.id.tvPrompt1);
         tvPrompt2 = view.findViewById(R.id.tvPrompt2);
         tvPrompt3 = view.findViewById(R.id.tvPrompt3);
+        ivCompleted1 = view.findViewById(R.id.ivCompleted1);
+        ivCompleted2 = view.findViewById(R.id.ivCompleted2);
+        ivCompleted3 = view.findViewById(R.id.ivCompleted3);
+
+        ivCompleted1.setVisibility(View.GONE);
+        ivCompleted2.setVisibility(View.GONE);
+        ivCompleted3.setVisibility(View.GONE);
 
         Calendar calendar = Calendar.getInstance();
         int dayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
@@ -126,6 +137,13 @@ public class HomeFragment extends Fragment {
                                             for(int i=0; i<prompts.length; i++){
                                                 if(curPrompt.equals(prompts[i])){
                                                     flags[i] = true; //change the corresponding flag
+                                                    if(i == 0){
+                                                        ivCompleted1.setVisibility(View.VISIBLE);
+                                                    }else if (i==1){
+                                                        ivCompleted2.setVisibility(View.VISIBLE);
+                                                    }else{
+                                                        ivCompleted3.setVisibility(View.VISIBLE);
+                                                    }
                                                 }
                                             }
                                         }

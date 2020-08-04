@@ -122,7 +122,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvPrompt"
                 android:layout_marginStart="4dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="12dp"
                 android:layout_toEndOf="@+id/ivPlayAudio"
                 android:text="@string/playing"
                 android:visibility="gone" />
